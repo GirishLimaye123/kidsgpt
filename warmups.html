@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warm-up Arcade — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Play before class</p>
+  <h1>Warm-up Arcade 🕹️</h1>
+  <p style="max-width:60ch;color:var(--ink-soft)">Five minutes each. They look like games.
+  They are secretly the lesson. Don't tell anyone.</p>
+</section>
+
+<!-- GAME 1: SORT IT -->
+<section class="lesson-section">
+  <header><span class="chip brain">🗂️</span><h2 style="margin:0">Sort It!</h2></header>
+  <p>Sort each thing into the right bucket as fast as you can.</p>
+  <div class="game-stage">
+    <p class="big" id="si-item">Press start!</p>
+    <div class="choice-row" id="si-choices">
+      <button class="btn primary" onclick="siStart()">Start ▶</button>
+    </div>
+    <p class="feedback" id="si-feedback"></p>
+    <div class="scoreboard"><span>SORTED <span id="si-score">0</span>/12</span></div>
+  </div>
+  <p id="si-twist" hidden style="margin-top:14px"><strong>🤯 Plot twist:</strong> you just did
+  exactly what an AI classifier does — looked at a thing, compared it to examples you've seen
+  before, and picked a category. AI learns categories from thousands of examples, the same way
+  you learned "that's a fruit" as a baby. In Week 6, you'll train one yourself. Question to
+  bring to class: what happens if all the examples a baby (or an AI) ever sees are weird ones?</p>
+</section>
+
+<!-- GAME 2: DESIGN DETECTIVE -->
+<section class="lesson-section">
+  <header><span class="chip design">🔍</span><h2 style="margin:0">Design Detective</h2></header>
+  <p>Two designs walk in. One is better. Tap it and find out why — these are real rules
+  that real designers get paid to know.</p>
+
+  <h3>Case 1 — the start screen</h3>
+  <div class="pair" id="dd1">
+    <button class="option" onclick="ddPick(this,'dd1')" data-win="1">
+      <strong>Design A</strong><br>One big button: <span class="demo-btn" style="background:#1FBFA4;color:#fff;border:none">▶ Play</span>
+    </button>
+    <button class="option" onclick="ddPick(this,'dd1')">
+      <strong>Design B</strong><br>Nine small buttons: Play, Options, Credits, Shop, News, Quit, Help, Stats, Profile
+    </button>
+  </div>
+  <p id="dd1-why" hidden>✅ <strong>A.</strong> Rule: <em>one clear next step</em>. Every extra
+  choice makes the brain work harder. Start screens have one job — start.</p>
+
+  <h3>Case 2 — readable or not?</h3>
+  <div class="pair" id="dd2">
+    <button class="option" onclick="ddPick(this,'dd2')">
+      <strong>Design A</strong><br><span style="color:#cfcfcf;background:#fff">Light grey words on a white background look fancy</span>
+    </button>
+    <button class="option" onclick="ddPick(this,'dd2')" data-win="1">
+      <strong>Design B</strong><br><span style="color:#1B2A4A;background:#fff;font-weight:700">Dark words on a light background, big enough to read</span>
+    </button>
+  </div>
+  <p id="dd2-why" hidden>✅ <strong>B.</strong> Rule: <em>contrast beats pretty</em>. If players
+  squint, they quit. Designers test this with a real tool called a contrast checker.</p>
+
+  <h3>Case 3 — the error message</h3>
+  <div class="pair" id="dd3">
+    <button class="option" onclick="ddPick(this,'dd3')" data-win="1">
+      <strong>Design A</strong><br>"That name is taken — try adding a number, like Nova7."
+    </button>
+    <button class="option" onclick="ddPick(this,'dd3')">
+      <strong>Design B</strong><br>"ERROR 4022: INVALID INPUT."
+    </button>
+  </div>
+  <p id="dd3-why" hidden>✅ <strong>A.</strong> Rule: <em>errors should help, not scare</em>.
+  Say what went wrong and what to do next, in human words.</p>
+</section>
+
+<!-- GAME 3: PROMPT TELEPHONE -->
+<section class="lesson-section">
+  <header><span class="chip build">📞</span><h2 style="margin:0">Prompt Telephone (solo round)</h2></header>
+  <p>AI does exactly what you SAY — not what you MEAN. Pick the prompt that gets what the
+  builder actually wanted.</p>
+
+  <h3>The builder wants: a scary-but-fun ghost for a kids' game</h3>
+  <div class="pair" id="pt1">
+    <button class="option" onclick="ddPick(this,'pt1')">
+      <strong>Prompt A</strong><br>"make a ghost"
+    </button>
+    <button class="option" onclick="ddPick(this,'pt1')" data-win="1">
+      <strong>Prompt B</strong><br>"Make a cartoon ghost for a kids' game: round, friendly-spooky, mint green, big eyes, slightly transparent, no blood or scary teeth."
+    </button>
+  </div>
+  <p id="pt1-why" hidden>✅ <strong>B.</strong> Specific beats vague: looks, mood, colors, and a
+  "do NOT" list. In class we call this giving AI a <em>recipe</em>, not a wish.</p>
+
+  <h3>The builder wants: AI to fix ONE bug without wrecking the game</h3>
+  <div class="pair" id="pt2">
+    <button class="option" onclick="ddPick(this,'pt2')" data-win="1">
+      <strong>Prompt A</strong><br>"The coin counter shows -1 when I restart. Fix only that — change nothing else about the game."
+    </button>
+    <button class="option" onclick="ddPick(this,'pt2')">
+      <strong>Prompt B</strong><br>"the game is broken fix it"
+    </button>
+  </div>
+  <p id="pt2-why" hidden>✅ <strong>A.</strong> Describe the bug, when it happens, and say
+  "change nothing else." Pros call surprise breakage a <em>regression</em> — you'll hunt some in Week 3.</p>
+</section>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Warm-up Arcade</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+/* ---- Sort It! ---- */
+const SI = [
+  {item:'🍓 Strawberry', cat:'Fruit'}, {item:'🥦 Broccoli', cat:'Vegetable'},
+  {item:'🐋 Whale', cat:'Animal'}, {item:'🍌 Banana', cat:'Fruit'},
+  {item:'🦅 Eagle', cat:'Animal'}, {item:'🥕 Carrot', cat:'Vegetable'},
+  {item:'🍅 Tomato', cat:'Fruit'}, {item:'🐙 Octopus', cat:'Animal'},
+  {item:'🌽 Corn', cat:'Vegetable'}, {item:'🍉 Watermelon', cat:'Fruit'},
+  {item:'🧅 Onion', cat:'Vegetable'}, {item:'🦎 Gecko', cat:'Animal'}
+];
+let siI = 0, siS = 0, siOrder = [];
+function siStart(){
+  siI = 0; siS = 0;
+  siOrder = [...SI].sort(() => Math.random() - .5);
+  document.getElementById('si-twist').hidden = true;
+  siNext();
+}
+function siNext(){
+  const q = siOrder[siI];
+  document.getElementById('si-item').textContent = q.item;
+  document.getElementById('si-feedback').textContent = '';
+  document.getElementById('si-choices').innerHTML =
+    ['Fruit','Vegetable','Animal'].map(c =>
+      `<button class="btn" onclick="siAnswer('${c}')">${c}</button>`).join('');
+}
+function siAnswer(c){
+  const q = siOrder[siI], fb = document.getElementById('si-feedback');
+  const right = c === q.cat;
+  if (right) siS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = right ? '✓ Sorted!' : `✗ ${q.item.split(' ')[1]} is ${q.cat === 'Animal' ? 'an' : 'a'} ${q.cat.toLowerCase()}! (Tomato fools everyone — botanically it's a fruit.)`;
+  document.getElementById('si-score').textContent = siS;
+  siI++;
+  if (siI < siOrder.length) { setTimeout(siNext, right ? 500 : 1600); }
+  else {
+    document.getElementById('si-item').textContent = `Done! ${siS}/12 sorted.`;
+    document.getElementById('si-choices').innerHTML = '<button class="btn" onclick="siStart()">Play again ↺</button>';
+    document.getElementById('si-twist').hidden = false;
+  }
+}
+
+/* ---- pick-the-better-design (shared) ---- */
+function ddPick(btn, id){
+  const box = document.getElementById(id);
+  box.querySelectorAll('.option').forEach(b => {
+    b.disabled = true;
+    b.classList.add(b.dataset.win ? 'win' : 'lose');
+  });
+  document.getElementById(id + '-why').hidden = false;
+}
+</script>
+</body>
+</html>

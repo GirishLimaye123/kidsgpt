@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 1: Hello, AI + Your First Game — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <a href="warmups.html">Warm-up arcade</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Module 1 · Week 1</p>
+  <h1>Hello, AI + Your First Game</h1>
+  <p style="max-width:60ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  By the end of today you'll know what AI really is, you'll have caught it making a mistake,
+  and you'll have a working quiz game with your name on it. Your answers on this page
+  <strong>save automatically</strong> — look for the green "saved ✓".</p>
+  <div class="pips"><span class="pip brain"></span><span class="pip build"></span><span class="pip design"></span><span class="pip guard"></span><span class="pip launch"></span></div>
+</section>
+
+<!-- 1 WARM-UP -->
+<section class="lesson-section">
+  <header><span class="chip guard">🕹️</span><h2 style="margin:0">1 · Warm-up: Real or AI?</h2></header>
+  <p>Some of these were written by a human, some by AI. Can you tell? (Most adults can't.)</p>
+  <div class="game-stage">
+    <div class="progress"><div id="wu-bar"></div></div>
+    <p class="big" id="wu-question">Press start!</p>
+    <div class="choice-row" id="wu-choices">
+      <button class="btn primary" onclick="wuStart()">Start the game ▶</button>
+    </div>
+    <p class="feedback" id="wu-feedback"></p>
+    <div class="scoreboard"><span>SCORE <span id="wu-score">0</span></span><span>ROUND <span id="wu-round">0</span>/6</span></div>
+  </div>
+</section>
+
+<!-- 2 AI TALK -->
+<section class="lesson-section">
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk</h2></header>
+  <p><strong>Big idea:</strong> AI is a <em>prediction machine</em>. It read a giant chunk of
+  the internet and got scary-good at guessing what words come next. It's not magic and it's
+  not a person — it's patterns. That's why it can be brilliant AND confidently wrong in the
+  same sentence. The builder (you) is always the boss.</p>
+
+  <label class="field" for="q-ai">What is AI, in YOUR words? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-ai" data-save data-label="What is AI in your words"></textarea>
+
+  <label class="field" for="q-help">Name two things AI could help YOU with this week. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-help" data-save data-label="Two things AI can help with"></textarea>
+
+  <label class="field" for="q-human">Name one decision a human should always make, not AI. Why? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-human" data-save data-label="A decision humans should make"></textarea>
+</section>
+
+<!-- 3 DESIGN CORNER -->
+<section class="lesson-section">
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Feedback</h2></header>
+  <p><strong>Today's design skill:</strong> <em>feedback</em> — how a player knows something
+  happened. Tap the design you think is better. No reading ahead — trust your gut, then
+  we'll see why.</p>
+
+  <h3>Round 1 — the player just answered a question…</h3>
+  <div class="pair" id="dd1">
+    <button class="option" onclick="ddPick(this,'dd1',false)">
+      <strong>Design A</strong><br>Nothing changes on screen. The next question just appears.
+    </button>
+    <button class="option" onclick="ddPick(this,'dd1',true)">
+      <strong>Design B</strong><br>The button flashes green, a "+1 coin" pops up, then the next question slides in.
+    </button>
+  </div>
+  <p id="dd1-why" hidden>✅ <strong>B wins.</strong> Players need proof their action worked.
+  Color + motion + a tiny reward = feedback. Without it, games feel broken even when they aren't.</p>
+
+  <h3>Round 2 — the player got an answer WRONG…</h3>
+  <div class="pair" id="dd2">
+    <button class="option" onclick="ddPick(this,'dd2',true)">
+      <strong>Design A</strong><br>A heart shakes and fades out, and a hint appears: "So close — check the units!"
+    </button>
+    <button class="option" onclick="ddPick(this,'dd2',false)">
+      <strong>Design B</strong><br>Big red screen: "WRONG!!! YOU LOSE A LIFE. TRY NOT TO FAIL."
+    </button>
+  </div>
+  <p id="dd2-why" hidden>✅ <strong>A wins.</strong> Feedback should inform, not punish.
+  Show what happened (heart fades) and help them improve (the hint). Mean games get closed.</p>
+
+  <label class="field" for="q-feedback">Where will YOUR game show feedback today? Plan one "right" effect and one "wrong" effect. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-feedback" data-save data-label="My feedback plan"></textarea>
+</section>
+
+<!-- 4 BUILD -->
+<section class="lesson-section">
+  <header><span class="chip build">🔨</span><h2 style="margin:0">4 · Build Sprint: Your First Quiz Game</h2></header>
+  <p>Fill the worksheet, copy your prompt into AI, and run the HTML it gives you.</p>
+
+  <label class="field" for="b-topic">Quiz topic you LOVE (animals? space? soccer? Minecraft?) <span class="savehint">saved ✓</span></label>
+  <input type="text" id="b-topic" data-save data-label="Quiz topic">
+
+  <label class="field" for="b-title">Game title <span class="savehint">saved ✓</span></label>
+  <input type="text" id="b-title" data-save data-label="Game title">
+
+  <label class="field" for="b-feel">Pick a vibe <span class="savehint">saved ✓</span></label>
+  <select id="b-feel" data-save data-label="Vibe">
+    <option>Bright and bouncy</option>
+    <option>Spooky and mysterious</option>
+    <option>Sporty scoreboard</option>
+    <option>Retro pixel arcade</option>
+  </select>
+
+  <p style="margin-top:16px"><button class="btn violet" onclick="buildPrompt()">Build my prompt 🪄</button></p>
+  <textarea id="b-out" rows="9" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+  <p><button class="btn small" onclick="copyPrompt()">Copy prompt</button> <span id="b-copied" class="savehint">copied ✓</span></p>
+</section>
+
+<!-- 5 TRUST CHECK -->
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">5 · Trust Check</h2></header>
+  <p>AI wrote your game fast — now be the boss and check its work:</p>
+  <p>① Play every question. Is each "correct" answer actually correct?<br>
+     ② Did your two feedback effects show up? Right effect AND wrong effect?<br>
+     ③ Try to break it: click fast, click twice, refresh mid-game.</p>
+  <label class="field" for="q-bug">What did AI get wrong (or what did you improve)? Every pro finds something. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-bug" data-save data-label="What AI got wrong"></textarea>
+</section>
+
+<!-- 6 SHIP -->
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">6 · Ship It</h2></header>
+  <p>Safety check before publishing: no full names, no photos of kids, no school or location,
+  no contact info, no mean results. Then hand your file to your teacher for the gallery.
+  <strong>That's today's win — you built and shipped a game. Week 1. Not bad.</strong></p>
+</section>
+
+<div class="notebook">
+  <h3>📓 My notebook</h3>
+  <p>Everything you typed today is saved on this computer. Download a copy to show your family or keep forever.</p>
+  <button class="btn sun" onclick="downloadNotebook('Week 1')">Download my answers</button>
+</div>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Week 1</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+/* ---- Real or AI? warm-up ---- */
+const WU = [
+  {text:'"The moon is the only place beyond Earth where humans have set foot."', ai:false, why:'A human wrote this — it\'s a plain true fact from NASA\'s website.'},
+  {text:'"The gentle whisper of dawn unfurled its golden tapestry across the slumbering meadow."', ai:true, why:'Classic AI poetry voice: fancy words, says almost nothing. "Unfurled its golden tapestry" is a big clue.'},
+  {text:'"My dog ate my sister\'s birthday candles and we had to call the vet. He\'s fine. The cake was not."', ai:false, why:'Human! Real life is specific and a little messy — AI rarely invents details this oddly perfect.'},
+  {text:'"Strawberries are an excellent source of vitamin C. Additionally, strawberries contain antioxidants. In conclusion, strawberries are healthy."', ai:true, why:'AI tell: "Additionally… In conclusion…" — robot essay skeleton with no personality.'},
+  {text:'"There are 47 bones in the human hand, which is why pianists are so talented."', ai:true, why:'AI being confidently WRONG: a hand has 27 bones, and the "which is why" doesn\'t even make sense. Always check facts!'},
+  {text:'"i tried to teach my grandma minecraft and now she has a better house than me"', ai:false, why:'Human — lowercase chaos and a true kind of embarrassment AI doesn\'t fake well.'}
+];
+let wuI = 0, wuS = 0;
+function wuStart(){ wuI = 0; wuS = 0; wuNext(); }
+function wuNext(){
+  const q = WU[wuI];
+  document.getElementById('wu-question').textContent = q.text;
+  document.getElementById('wu-feedback').textContent = '';
+  document.getElementById('wu-round').textContent = wuI + 1;
+  document.getElementById('wu-bar').style.width = (wuI/WU.length*100) + '%';
+  document.getElementById('wu-choices').innerHTML =
+    '<button class="btn" onclick="wuAnswer(false)">🙋 Human wrote it</button>' +
+    '<button class="btn" onclick="wuAnswer(true)">🤖 AI wrote it</button>';
+}
+function wuAnswer(guessAI){
+  const q = WU[wuI], fb = document.getElementById('wu-feedback');
+  const right = guessAI === q.ai;
+  if (right) wuS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = (right ? '✓ Correct! ' : '✗ Gotcha! ') + q.why;
+  document.getElementById('wu-score').textContent = wuS;
+  wuI++;
+  document.getElementById('wu-choices').innerHTML = wuI < WU.length
+    ? '<button class="btn primary" onclick="wuNext()">Next ▶</button>'
+    : '<button class="btn mint" onclick="wuEnd()">See my result 🏁</button>';
+}
+function wuEnd(){
+  document.getElementById('wu-bar').style.width = '100%';
+  document.getElementById('wu-question').textContent =
+    `You spotted ${wuS}/6! Lesson: AI sounds confident even when it's wrong — so builders always check. That's your superpower today.`;
+  document.getElementById('wu-choices').innerHTML = '<button class="btn" onclick="wuStart()">Play again ↺</button>';
+  document.getElementById('wu-feedback').textContent = '';
+}
+
+/* ---- Design Detective ---- */
+function ddPick(btn, id, isWin){
+  const box = document.getElementById(id);
+  box.querySelectorAll('.option').forEach(b => { b.disabled = true; b.classList.add(b===btn ? (isWin?'win':'lose') : (isWin?'lose':'win')); });
+  // mark actual winner green regardless
+  box.querySelectorAll('.option').forEach(b => {
+    const wins = b.getAttribute('onclick').includes('true');
+    b.classList.remove('win','lose');
+    b.classList.add(wins ? 'win' : 'lose');
+  });
+  document.getElementById(id + '-why').hidden = false;
+}
+
+/* ---- prompt builder ---- */
+function buildPrompt(){
+  const topic = document.getElementById('b-topic').value || 'animals';
+  const title = document.getElementById('b-title').value || 'My Quiz Quest';
+  const feel  = document.getElementById('b-feel').value;
+  document.getElementById('b-out').value =
+`Build a single HTML file: a 5-question multiple-choice quiz game called "${title}" about ${topic}, for an 11-year-old.
+Style: ${feel.toLowerCase()}, big friendly buttons, readable fonts.
+Rules: 4 choices per question, exactly one correct. Score starts at 0; +1 coin per correct answer.
+Feedback (important): when I answer, flash the button green or red, show a one-line explanation, and pop a "+1 coin" effect on correct answers. Never shame the player on a wrong answer.
+End screen: my score out of 5, a fun title based on my score, and a Play Again button.
+Make the answer key genuinely correct — no trick questions. Put all HTML, CSS and JavaScript in one file.`;
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('b-out').value || '');
+  const c = document.getElementById('b-copied');
+  c.classList.add('show'); setTimeout(()=>c.classList.remove('show'), 1200);
+}
+</script>
+</body>
+</html>

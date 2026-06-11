@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student login — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav"><a href="index.html">← Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="login-box">
+    <div class="card">
+      <p class="eyebrow">Builders only</p>
+      <h2>Open your missions</h2>
+      <p style="color:var(--ink-soft)">Pick your builder name and type your secret
+      password. Forgot it? Ask your teacher — never a stranger.</p>
+
+      <form id="login-form">
+        <label class="field" for="login-name">Builder name</label>
+        <select id="login-name" required>
+          <option value="" disabled selected>Pick your name…</option>
+        </select>
+
+        <label class="field" for="login-pw">Password</label>
+        <input type="password" id="login-pw" autocomplete="current-password" required>
+
+        <p class="error-msg" id="login-error" role="alert"></p>
+        <button class="btn primary" type="submit" style="width:100%">Let me in 🚀</button>
+      </form>
+    </div>
+
+    <p style="font-size:.82rem;color:var(--ink-soft);text-align:center;margin-top:16px">
+      Passwords here protect class materials from copying — they are not for
+      anything important. Never reuse a password from another account.
+    </p>
+  </div>
+</main>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
