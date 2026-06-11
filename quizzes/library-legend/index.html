@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Which Library Legend Are You?</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --paper: #fff7e8;
+      --surface: #ffffff;
+      --line: #d8dde7;
+      --teal: #19a7a8;
+      --coral: #f26d5b;
+      --gold: #f4c74a;
+      --green: #78c97b;
+      --blue: #2867b2;
+      --shadow: 0 16px 36px rgba(23, 32, 51, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background:
+        linear-gradient(90deg, rgba(25, 167, 168, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(25, 167, 168, 0.08) 1px, transparent 1px),
+        var(--paper);
+      background-size: 30px 30px;
+    }
+
+    main {
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0;
+    }
+
+    .top-link {
+      display: inline-flex;
+      margin-bottom: 18px;
+      color: var(--blue);
+      font-weight: 850;
+      text-underline-offset: 4px;
+    }
+
+    .quiz-shell {
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow), 8px 8px 0 var(--ink);
+    }
+
+    .quiz-header {
+      padding: clamp(22px, 5vw, 42px);
+      border-bottom: 2px solid var(--ink);
+      background:
+        linear-gradient(135deg, rgba(244, 199, 74, 0.92), rgba(242, 109, 91, 0.84)),
+        repeating-linear-gradient(90deg, transparent 0 28px, rgba(23, 32, 51, 0.15) 28px 32px);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      overflow-wrap: anywhere;
+    }
+
+    h1 {
+      max-width: 13ch;
+      margin: 0;
+      font-size: clamp(2.7rem, 9vw, 5.5rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .quiz-header p:not(.eyebrow) {
+      max-width: 58ch;
+      margin: 18px 0 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .quiz-body {
+      display: grid;
+      gap: 20px;
+      padding: clamp(20px, 5vw, 42px);
+    }
+
+    .progress {
+      height: 12px;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: #eef2f6;
+    }
+
+    .progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--teal);
+      transition: width 220ms ease;
+    }
+
+    .question-count {
+      margin: 0;
+      color: #5f6b78;
+      font-weight: 850;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .answers {
+      display: grid;
+      gap: 12px;
+    }
+
+    button {
+      min-height: 54px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 850;
+      text-align: left;
+      padding: 14px 16px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    button:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    button:focus-visible,
+    .top-link:focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 4px;
+    }
+
+    .answer-button:nth-child(1) {
+      background: #fff1b8;
+    }
+
+    .answer-button:nth-child(2) {
+      background: #dff6f6;
+    }
+
+    .answer-button:nth-child(3) {
+      background: #ffe1d9;
+    }
+
+    .result-panel {
+      display: none;
+      gap: 14px;
+      padding: clamp(20px, 5vw, 42px);
+    }
+
+    .result-panel.active {
+      display: grid;
+    }
+
+    .badge {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 10px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--green);
+      font-size: 0.86rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .result-name {
+      margin: 0;
+      font-size: clamp(2.1rem, 7vw, 4.5rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .result-copy {
+      max-width: 62ch;
+      margin: 0;
+      color: #4f5d6d;
+      font-size: 1.08rem;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .result-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #f8fbfd;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .result-card.is-winner {
+      background: #fff1b8;
+    }
+
+    .result-card-badge {
+      display: inline-flex;
+      width: fit-content;
+      padding: 5px 8px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #ffffff;
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .result-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.1;
+    }
+
+    .result-card p {
+      margin: 0;
+      color: #4f5d6d;
+    }
+
+    .restart {
+      width: fit-content;
+      margin-top: 8px;
+      background: var(--gold);
+    }
+
+    @media (max-width: 520px) {
+      main {
+        width: min(100% - 20px, 900px);
+      }
+
+      .restart {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="top-link" href="../../index.html">Back to KIDSGPT gallery</a>
+    <section class="quiz-shell" aria-live="polite">
+      <div class="quiz-header">
+        <p class="eyebrow">Demo quiz</p>
+        <h1>Which Library Legend Are You?</h1>
+        <p>Answer five questions to reveal your secret library adventure style.</p>
+      </div>
+
+      <div id="quizBody" class="quiz-body">
+        <div class="progress" aria-label="Quiz progress">
+          <span id="progressBar"></span>
+        </div>
+        <p id="questionCount" class="question-count"></p>
+        <h2 id="questionText"></h2>
+        <div id="answers" class="answers"></div>
+      </div>
+
+      <div id="resultPanel" class="result-panel">
+        <span id="resultBadge" class="badge"></span>
+        <h2 id="resultName" class="result-name"></h2>
+        <p id="resultCopy" class="result-copy"></p>
+        <div id="allResults" class="result-grid"></div>
+        <button class="restart" type="button" onclick="restartQuiz()">Restart quiz</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "You find a glowing book humming on a shelf. What do you do?",
+        answers: [
+          { text: "Open it immediately", result: "Spark Explorer" },
+          { text: "Check the cover for clues", result: "Clue Keeper" },
+          { text: "Ask the librarian if it is safe", result: "Kind Captain" }
+        ]
+      },
+      {
+        text: "A secret door appears behind the history section. Pick a tool.",
+        answers: [
+          { text: "A flashlight that tells jokes", result: "Laugh Wizard" },
+          { text: "A map with moving arrows", result: "Path Finder" },
+          { text: "A notebook for observations", result: "Clue Keeper" }
+        ]
+      },
+      {
+        text: "Your friend is nervous about entering the mystery room.",
+        answers: [
+          { text: "Go first and wave them in", result: "Spark Explorer" },
+          { text: "Make a silly chant together", result: "Laugh Wizard" },
+          { text: "Ask what would make them comfortable", result: "Kind Captain" }
+        ]
+      },
+      {
+        text: "The robot librarian gives you one upgrade.",
+        answers: [
+          { text: "Rocket shoes for fast exploring", result: "Spark Explorer" },
+          { text: "A compass that finds hidden shelves", result: "Path Finder" },
+          { text: "A kindness scanner for helping people", result: "Kind Captain" }
+        ]
+      },
+      {
+        text: "You reach the final locked bookcase. What is your move?",
+        answers: [
+          { text: "Search for patterns in the lock", result: "Clue Keeper" },
+          { text: "Try the path nobody noticed", result: "Path Finder" },
+          { text: "Tell the lock a dramatic joke", result: "Laugh Wizard" }
+        ]
+      }
+    ];
+
+    const results = {
+      "Spark Explorer": {
+        badge: "Brave starter",
+        copy: "You jump into adventures with bright energy. Your superpower is making the first move when everyone else is still staring at the mysterious shelf."
+      },
+      "Clue Keeper": {
+        badge: "Pattern spotter",
+        copy: "You notice details other people miss. Your superpower is slowing down just enough to find the clue hiding in plain sight."
+      },
+      "Kind Captain": {
+        badge: "Team hero",
+        copy: "You make adventures better for everyone. Your superpower is remembering that people matter more than winning the quest."
+      },
+      "Laugh Wizard": {
+        badge: "Chaos charmer",
+        copy: "You can turn a spooky hallway into a comedy scene. Your superpower is making people brave by making them laugh."
+      },
+      "Path Finder": {
+        badge: "Secret route expert",
+        copy: "You are great at spotting the path nobody else considered. Your superpower is asking, 'What if there is another way?'"
+      }
+    };
+
+    let currentQuestion = 0;
+    let scores = {};
+
+    function showQuestion() {
+      const question = questions[currentQuestion];
+      document.getElementById("questionCount").textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      document.getElementById("questionText").textContent = question.text;
+      document.getElementById("progressBar").style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+      const answers = document.getElementById("answers");
+      answers.innerHTML = "";
+
+      question.answers.forEach((answer) => {
+        const button = document.createElement("button");
+        button.className = "answer-button";
+        button.type = "button";
+        button.textContent = answer.text;
+        button.addEventListener("click", () => chooseAnswer(answer.result));
+        answers.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(resultName) {
+      scores[resultName] = (scores[resultName] || 0) + 1;
+      currentQuestion += 1;
+
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quizBody").style.display = "none";
+      document.getElementById("progressBar").style.width = "100%";
+
+      const winner = Object.keys(results).reduce((best, name) => {
+        if (!best || (scores[name] || 0) > (scores[best] || 0)) {
+          return name;
+        }
+        return best;
+      }, null);
+
+      const result = results[winner];
+      document.getElementById("resultBadge").textContent = result.badge;
+      document.getElementById("resultName").textContent = winner;
+      document.getElementById("resultCopy").textContent = result.copy;
+      renderAllResults(winner);
+      document.getElementById("resultPanel").classList.add("active");
+    }
+
+    function renderAllResults(winner) {
+      const allResults = document.getElementById("allResults");
+      allResults.innerHTML = "";
+
+      Object.entries(results).forEach(([name, result]) => {
+        const card = document.createElement("article");
+        card.className = "result-card";
+
+        if (name === winner) {
+          card.classList.add("is-winner");
+        }
+
+        card.innerHTML = `
+          <span class="result-card-badge">${name === winner ? "Your result" : result.badge}</span>
+          <h3>${name}</h3>
+          <p>${result.copy}</p>
+        `;
+
+        allResults.appendChild(card);
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      scores = {};
+      document.getElementById("quizBody").style.display = "grid";
+      document.getElementById("resultPanel").classList.remove("active");
+      document.getElementById("allResults").innerHTML = "";
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
