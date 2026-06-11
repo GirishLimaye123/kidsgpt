@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robot Library Signal Quest</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --paper: #fff8eb;
+      --surface: #ffffff;
+      --muted: #596777;
+      --line: #d8e1e8;
+      --teal: #19a7a8;
+      --coral: #f26d5b;
+      --gold: #f4c74a;
+      --green: #78c97b;
+      --blue: #2867b2;
+      --shadow: 0 18px 42px rgba(23, 32, 51, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background:
+        linear-gradient(90deg, rgba(40, 103, 178, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(40, 103, 178, 0.08) 1px, transparent 1px),
+        var(--paper);
+      background-size: 30px 30px;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .top-link {
+      display: inline-flex;
+      margin-bottom: 18px;
+      color: var(--blue);
+      font-weight: 850;
+      text-underline-offset: 4px;
+    }
+
+    .game-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.55fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .story-panel,
+    .side-panel {
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow), 6px 6px 0 var(--ink);
+      overflow: hidden;
+    }
+
+    .story-header {
+      padding: clamp(22px, 5vw, 42px);
+      border-bottom: 2px solid var(--ink);
+      background:
+        linear-gradient(135deg, rgba(244, 199, 74, 0.94), rgba(25, 167, 168, 0.8)),
+        repeating-linear-gradient(90deg, transparent 0 26px, rgba(23, 32, 51, 0.15) 26px 30px);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      overflow-wrap: anywhere;
+    }
+
+    h1 {
+      max-width: 13ch;
+      margin: 0;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .story-header p:not(.eyebrow) {
+      max-width: 58ch;
+      margin: 18px 0 0;
+      font-size: 1.08rem;
+      font-weight: 750;
+    }
+
+    .scene-art {
+      position: relative;
+      min-height: 250px;
+      border-bottom: 2px solid var(--ink);
+      background:
+        linear-gradient(180deg, #dff6f6 0%, #fff8eb 78%),
+        repeating-linear-gradient(90deg, transparent 0 44px, rgba(23, 32, 51, 0.09) 44px 48px);
+      overflow: hidden;
+    }
+
+    .shelf {
+      position: absolute;
+      left: 7%;
+      bottom: 28px;
+      width: 48%;
+      height: 150px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #f9d67a;
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .shelf::before,
+    .shelf::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--ink);
+    }
+
+    .shelf::before {
+      top: 48px;
+    }
+
+    .shelf::after {
+      top: 98px;
+    }
+
+    .books {
+      position: absolute;
+      inset: 14px;
+      background:
+        linear-gradient(90deg, #f26d5b 0 8%, transparent 8% 12%, #2867b2 12% 24%, transparent 24% 30%, #78c97b 30% 42%, transparent 42% 48%, #ffffff 48% 60%, transparent 60% 66%, #19a7a8 66% 78%, transparent 78% 84%, #f26d5b 84% 100%);
+      opacity: 0.95;
+    }
+
+    .robot {
+      position: absolute;
+      right: 12%;
+      bottom: 42px;
+      width: 146px;
+      height: 146px;
+      border: 2px solid var(--ink);
+      border-radius: 18px 18px 8px 8px;
+      background: #ffffff;
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    .robot::before,
+    .robot::after {
+      content: "";
+      position: absolute;
+      top: 42px;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .robot::before {
+      left: 32px;
+    }
+
+    .robot::after {
+      right: 32px;
+    }
+
+    .robot-mouth {
+      position: absolute;
+      left: 50%;
+      bottom: 36px;
+      width: 62px;
+      height: 12px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      transform: translateX(-50%);
+      background: var(--gold);
+    }
+
+    .signal {
+      position: absolute;
+      right: 7%;
+      top: 28px;
+      display: grid;
+      width: 86px;
+      height: 86px;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--coral);
+      box-shadow: 4px 4px 0 var(--ink);
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 950;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.06);
+      }
+    }
+
+    .story-body {
+      display: grid;
+      gap: 18px;
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .scene-count {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 850;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .scene-text {
+      margin: 0;
+      max-width: 68ch;
+      color: #435163;
+      font-size: 1.08rem;
+    }
+
+    .choices {
+      display: grid;
+      gap: 12px;
+    }
+
+    button {
+      min-height: 54px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 850;
+      text-align: left;
+      padding: 14px 16px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    button:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    button:focus-visible,
+    .top-link:focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 4px;
+    }
+
+    .choice-button:nth-child(1) {
+      background: #fff1b8;
+    }
+
+    .choice-button:nth-child(2) {
+      background: #dff6f6;
+    }
+
+    .choice-button:nth-child(3) {
+      background: #ffe1d9;
+    }
+
+    .restart {
+      width: fit-content;
+      background: var(--gold);
+    }
+
+    .side-panel {
+      align-self: start;
+      padding: 18px;
+    }
+
+    .side-panel h3 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+    }
+
+    .status-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-card {
+      padding: 12px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #f8fbfd;
+    }
+
+    .status-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .status-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.04rem;
+    }
+
+    .log {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .log li {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 820px) {
+      .game-shell {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: clamp(2.8rem, 16vw, 4.8rem);
+      }
+
+      .robot {
+        right: 7%;
+        width: 118px;
+        height: 124px;
+      }
+
+      .shelf {
+        width: 54%;
+      }
+
+      .restart {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="top-link" href="/">Back to KIDSGPT</a>
+    <div class="game-shell">
+      <section class="story-panel" aria-live="polite">
+        <div class="story-header">
+          <p class="eyebrow">Class 2 demo</p>
+          <h1>Robot Library Signal Quest</h1>
+          <p>Make choices, collect clues, and help the robot librarian send the missing story signal before the library closes.</p>
+        </div>
+
+        <div class="scene-art" aria-hidden="true">
+          <div class="shelf"><div class="books"></div></div>
+          <div class="robot"><div class="robot-mouth"></div></div>
+          <div class="signal">SOS</div>
+        </div>
+
+        <div class="story-body">
+          <p id="sceneCount" class="scene-count"></p>
+          <h2 id="sceneTitle"></h2>
+          <p id="sceneText" class="scene-text"></p>
+          <div id="choices" class="choices"></div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <h3>Mission status</h3>
+        <div class="status-grid">
+          <div class="status-card">
+            <strong id="signalStatus">Signal: unstable</strong>
+            <p>Choose carefully. Each choice changes the ending.</p>
+          </div>
+          <div class="status-card">
+            <strong>Inventory</strong>
+            <p id="inventoryText">Empty</p>
+          </div>
+          <div class="status-card">
+            <strong>Decision log</strong>
+            <ul id="log" class="log"></ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const state = {
+      scene: "start",
+      inventory: [],
+      kindness: 0,
+      courage: 0,
+      logic: 0,
+      log: []
+    };
+
+    const scenes = {
+      start: {
+        title: "The Last Bell",
+        text: "The library lights flicker. Mx. Byte, the robot librarian, rolls toward you with a blinking signal disk. A story signal is trapped somewhere in the building.",
+        choices: [
+          { text: "Ask Mx. Byte what went wrong", next: "interview", score: { logic: 1 }, item: "signal disk", log: "You asked before acting." },
+          { text: "Run straight toward the glowing shelves", next: "glowShelves", score: { courage: 1 }, item: "brave spark", log: "You moved fast toward the glow." }
+        ]
+      },
+      interview: {
+        title: "Robot Interview",
+        text: "Mx. Byte says the lost signal responds to stories that understand people. You need to learn who the signal is trying to reach.",
+        choices: [
+          { text: "Interview the nearest reader", next: "reader", score: { kindness: 2 }, item: "reader clue", log: "You learned from a human first." },
+          { text: "Ask the robot to guess the answer", next: "aiGuess", score: { logic: 1 }, item: "robot guess", log: "You asked AI for a first guess." }
+        ]
+      },
+      glowShelves: {
+        title: "The Glowing Shelf",
+        text: "A shelf hums with blue light. Three books shake like they want to talk, but one has a warning label: 'Do not open without context.'",
+        choices: [
+          { text: "Open the loudest book", next: "messyMagic", score: { courage: 2 }, item: "wild page", log: "You opened the loudest book." },
+          { text: "Look for the book with matching clues", next: "reader", score: { logic: 2 }, item: "shelf clue", log: "You checked the clues first." }
+        ]
+      },
+      reader: {
+        title: "The Reader's Clue",
+        text: "A kid at the study table says, 'I love stories where the helper listens first. Also, secret doors are excellent.'",
+        choices: [
+          { text: "Design a story path for that reader", next: "secretDoor", score: { kindness: 2 }, item: "human insight", log: "You used the interview to choose a path." },
+          { text: "Make the story as dramatic as possible", next: "messyMagic", score: { courage: 1 }, item: "dramatic idea", log: "You chose maximum drama." }
+        ]
+      },
+      aiGuess: {
+        title: "The Confident Guess",
+        text: "Mx. Byte predicts: 'The signal wants explosions, lasers, and eighteen dragons.' It sounds exciting, but maybe not connected to the real reader.",
+        choices: [
+          { text: "Test the guess with a human", next: "reader", score: { kindness: 1, logic: 1 }, item: "tested guess", log: "You tested the AI idea with a human." },
+          { text: "Trust the robot completely", next: "messyMagic", score: { courage: 1 }, item: "untested guess", log: "You trusted the AI guess without testing." }
+        ]
+      },
+      messyMagic: {
+        title: "Too Much Magic",
+        text: "The shelf explodes into confetti-colored paragraphs. Mx. Byte is impressed and slightly worried. The signal gets louder, but harder to understand.",
+        choices: [
+          { text: "Slow down and organize the clues", next: "secretDoor", score: { logic: 2 }, item: "organized notes", log: "You cleaned up the confusion." },
+          { text: "Add even more chaos", next: "chaosEnding", score: { courage: 2 }, item: "chaos badge", log: "You chose more chaos." }
+        ]
+      },
+      secretDoor: {
+        title: "The Secret Door",
+        text: "Behind the biography shelf, a tiny door opens. It has three locks: listening, logic, and bravery. Your choices have charged some of them.",
+        choices: [
+          { text: "Use your clues to tune the signal", next: "ending", score: { logic: 1 }, item: "tuned signal", log: "You tuned the signal with your clues." },
+          { text: "Give Mx. Byte a pep talk", next: "ending", score: { kindness: 1 }, item: "robot confidence", log: "You helped Mx. Byte feel ready." }
+        ]
+      },
+      chaosEnding: {
+        title: "The Confetti Ending",
+        text: "The signal blasts through the library as a glittery mystery trailer. Nobody understands it, but everyone claps politely. Mx. Byte files it under 'interesting experiment.'",
+        ending: "Chaotic Creator",
+        badge: "Fun, loud, needs a user test",
+        choices: []
+      },
+      ending: {
+        title: "Signal Restored",
+        text: "",
+        choices: []
+      }
+    };
+
+    function choose(choice) {
+      addScores(choice.score || {});
+      addItem(choice.item);
+      addLog(choice.log);
+      state.scene = choice.next;
+      render();
+    }
+
+    function addScores(scores) {
+      Object.entries(scores).forEach(([key, value]) => {
+        state[key] += value;
+      });
+    }
+
+    function addItem(item) {
+      if (item && !state.inventory.includes(item)) {
+        state.inventory.push(item);
+      }
+    }
+
+    function addLog(entry) {
+      if (entry) {
+        state.log.push(entry);
+      }
+    }
+
+    function render() {
+      const scene = scenes[state.scene];
+      const isEnding = state.scene === "ending";
+      const final = isEnding ? getFinalEnding() : scene;
+
+      document.getElementById("sceneCount").textContent = isEnding || scene.ending ? "Ending reached" : `Scene ${Math.min(state.log.length + 1, 5)} of 5`;
+      document.getElementById("sceneTitle").textContent = final.title;
+      document.getElementById("sceneText").textContent = final.text;
+      document.getElementById("signalStatus").textContent = getSignalStatus(final);
+      document.getElementById("inventoryText").textContent = state.inventory.length ? state.inventory.join(", ") : "Empty";
+
+      const choices = document.getElementById("choices");
+      choices.innerHTML = "";
+
+      if (final.ending || isEnding) {
+        const badge = document.createElement("p");
+        badge.className = "scene-text";
+        badge.innerHTML = `<strong>Ending type:</strong> ${final.ending}<br><strong>Badge:</strong> ${final.badge}`;
+        choices.appendChild(badge);
+
+        const restart = document.createElement("button");
+        restart.className = "restart";
+        restart.type = "button";
+        restart.textContent = "Restart mission";
+        restart.addEventListener("click", restartGame);
+        choices.appendChild(restart);
+      } else {
+        scene.choices.forEach((choice) => {
+          const button = document.createElement("button");
+          button.className = "choice-button";
+          button.type = "button";
+          button.textContent = choice.text;
+          button.addEventListener("click", () => choose(choice));
+          choices.appendChild(button);
+        });
+      }
+
+      renderLog();
+    }
+
+    function getFinalEnding() {
+      if (state.kindness >= 4) {
+        return {
+          title: "The Listener Ending",
+          text: "The signal becomes a story made for the reader you interviewed. Mx. Byte stamps your mission report: 'Best result: designed for a real human.'",
+          ending: "Empathy Engineer",
+          badge: "Listened first, built better"
+        };
+      }
+
+      if (state.logic >= 4) {
+        return {
+          title: "The Puzzle Ending",
+          text: "You align every clue and the signal clicks into place like a perfect lock. Mx. Byte prints you a certificate for calm debugging.",
+          ending: "Signal Solver",
+          badge: "Tested, tuned, fixed"
+        };
+      }
+
+      return {
+        title: "The Brave Ending",
+        text: "You move fast, make bold choices, and get the signal out just before closing time. It is not perfect, but it is alive and playable.",
+        ending: "Bold Builder",
+        badge: "Shipped the first version"
+      };
+    }
+
+    function getSignalStatus(scene) {
+      if (scene.ending || state.scene === "ending") {
+        return "Signal: restored";
+      }
+
+      if (state.inventory.length >= 4) {
+        return "Signal: nearly stable";
+      }
+
+      if (state.inventory.length >= 2) {
+        return "Signal: improving";
+      }
+
+      return "Signal: unstable";
+    }
+
+    function renderLog() {
+      const log = document.getElementById("log");
+      log.innerHTML = "";
+
+      if (!state.log.length) {
+        const item = document.createElement("li");
+        item.textContent = "No choices yet.";
+        log.appendChild(item);
+        return;
+      }
+
+      state.log.slice(-5).forEach((entry) => {
+        const item = document.createElement("li");
+        item.textContent = entry;
+        log.appendChild(item);
+      });
+    }
+
+    function restartGame() {
+      state.scene = "start";
+      state.inventory = [];
+      state.kindness = 0;
+      state.courage = 0;
+      state.logic = 0;
+      state.log = [];
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
