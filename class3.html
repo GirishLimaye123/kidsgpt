@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3: Remix Lab — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.remix-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.remix-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;box-shadow:var(--shadow-sm)}
+.remix-card h3{margin-bottom:4px}
+.demo-screen{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:18px;margin:14px 0;text-align:center}
+.demo-target{display:inline-block;border:2px solid var(--ink);border-radius:12px;padding:12px 18px;background:var(--guard);font-family:var(--font-display);font-weight:800;box-shadow:var(--shadow-sm)}
+.demo-target.juiced{animation:pop .5s ease;background:var(--launch);color:#fff}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-2deg)}100%{transform:scale(1)}}
+.tiny-checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.tiny-checklist span{display:block;border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700}
+@media (max-width:760px){.remix-grid,.tiny-checklist{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <a href="warmups.html">Warm-up arcade</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Module 1 · Week 3</p>
+  <h1>Remix Lab</h1>
+  <p style="max-width:62ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  Today you take your Week 2 quest game and level it up. The trick is not just asking AI
+  for cooler stuff. The trick is changing the game <strong>on purpose</strong>, testing after
+  each change, and catching anything AI accidentally breaks.</p>
+  <div class="pips"><span class="pip brain"></span><span class="pip build"></span><span class="pip design"></span><span class="pip guard"></span><span class="pip launch"></span></div>
+</section>
+
+<!-- 1 WARM-UP -->
+<section class="lesson-section">
+  <header><span class="chip build">🕹️</span><h2 style="margin:0">1 · Warm-up: Prompt Repair Shop</h2></header>
+  <p>AI does what you ask for, not always what you meant. Pick the prompt that gives AI the clearest repair order.</p>
+  <div class="game-stage">
+    <p class="big" id="pr-question">Press start!</p>
+    <div class="choice-row" id="pr-choices">
+      <button class="btn primary" onclick="prStart()">Start repair shop ▶</button>
+    </div>
+    <p class="feedback" id="pr-feedback"></p>
+    <div class="scoreboard"><span>REPAIRS <span id="pr-score">0</span></span><span>ROUND <span id="pr-round">0</span>/4</span></div>
+  </div>
+</section>
+
+<!-- 2 AI TALK -->
+<section class="lesson-section">
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: Iteration</h2></header>
+  <p><strong>Big idea:</strong> pros almost never keep the first version. They make one change,
+  test it, make another change, test again. That loop is called <em>iteration</em>.</p>
+
+  <label class="field" for="q-iterate">What does "iteration" mean in your own words? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-iterate" data-save data-label="What iteration means"></textarea>
+
+  <label class="field" for="q-ai-break">Why might AI accidentally break an old feature while adding a new one? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-ai-break" data-save data-label="Why AI might break an old feature"></textarea>
+
+  <label class="field" for="q-one-change">What is one change you want to make to your quest game today? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-one-change" data-save data-label="One change I want today"></textarea>
+</section>
+
+<!-- 3 DESIGN CORNER -->
+<section class="lesson-section">
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Juice</h2></header>
+  <p><strong>Today's design skill:</strong> juice. Juice is the tiny movement, sound, color,
+  sparkle, shake, or celebration that makes a game feel alive.</p>
+
+  <div class="demo-screen">
+    <p>Try it: same reward, different feeling.</p>
+    <span class="demo-target" id="juice-demo">+1 coin</span>
+    <p style="margin-top:16px">
+      <button class="btn" onclick="plainDemo()">Plain reward</button>
+      <button class="btn violet" onclick="juiceDemo()">Juiced reward</button>
+    </p>
+    <p class="feedback" id="juice-feedback"></p>
+  </div>
+
+  <div class="remix-grid">
+    <div class="remix-card"><h3>Motion</h3><p>Pop, slide, shake, bounce, or pulse when something happens.</p></div>
+    <div class="remix-card"><h3>Sound</h3><p>A tiny win sound, soft mistake sound, or final victory sound.</p></div>
+    <div class="remix-card"><h3>Reward</h3><p>Confetti, coin burst, streak badge, title upgrade, or new animation.</p></div>
+  </div>
+
+  <label class="field" for="q-juice">Plan one juice effect for your game. What happens, and when? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-juice" data-save data-label="My juice effect plan"></textarea>
+</section>
+
+<!-- 4 BUILD -->
+<section class="lesson-section">
+  <header><span class="chip build">🔨</span><h2 style="margin:0">4 · Build Sprint: Five Upgrades</h2></header>
+  <p>Fill the remix plan, then copy the prompt into AI with your Week 2 game file. Ask for one upgrade batch, test, then ask for fixes.</p>
+
+  <label class="field" for="r-title">Your Week 2 game name <span class="savehint">saved ✓</span></label>
+  <input type="text" id="r-title" data-save data-label="Week 2 game name">
+
+  <label class="field" for="r-keep">What must NOT break? <span class="savehint">saved ✓</span></label>
+  <textarea id="r-keep" data-save data-label="Things that must not break">Keep lives, coins, power-ups, scene order, wrong-answer life loss, restart at 0 lives, and victory screen working.</textarea>
+
+  <label class="field" for="r-juice">Upgrade 1: one juice effect <span class="savehint">saved ✓</span></label>
+  <textarea id="r-juice" data-save data-label="Upgrade 1 juice effect">Add a coin pop and small celebration when the player answers correctly.</textarea>
+
+  <label class="field" for="r-mechanic">Upgrade 2: one new mechanic <span class="savehint">saved ✓</span></label>
+  <select id="r-mechanic" data-save data-label="Upgrade 2 new mechanic">
+    <option>Streak bonus: 3 correct in a row gives +2 coins</option>
+    <option>Boss scene: final challenger has 2 hearts</option>
+    <option>Mystery chest: one random scene gives a bonus</option>
+    <option>Timer mode: answer before time runs out</option>
+    <option>Trap question: one question costs 2 lives if missed</option>
+  </select>
+
+  <label class="field" for="r-visual">Upgrade 3: one visual change <span class="savehint">saved ✓</span></label>
+  <textarea id="r-visual" data-save data-label="Upgrade 3 visual change">Make each scene feel more different with a new color palette and bigger scene title.</textarea>
+
+  <label class="field" for="r-fix">Upgrade 4: one fix or improvement <span class="savehint">saved ✓</span></label>
+  <textarea id="r-fix" data-save data-label="Upgrade 4 fix">Make instructions clearer before the first question.</textarea>
+
+  <label class="field" for="r-wild">Upgrade 5: wild card <span class="savehint">saved ✓</span></label>
+  <textarea id="r-wild" data-save data-label="Upgrade 5 wild card">Add a secret title on the win screen based on final coins and lives.</textarea>
+
+  <p style="margin-top:16px"><button class="btn violet" onclick="buildRemixPrompt()">Build my remix prompt 🪄</button></p>
+  <textarea id="r-out" rows="15" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+  <p><button class="btn small" onclick="copyRemixPrompt()">Copy prompt</button> <span id="r-copied" class="savehint">copied ✓</span></p>
+</section>
+
+<!-- 5 TRUST CHECK -->
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">5 · Trust Check: Regression Hunt</h2></header>
+  <p>A <strong>regression</strong> is when a new change secretly breaks something that used to work.
+  After AI edits your game, test the old rules again.</p>
+  <div class="tiny-checklist">
+    <span>Correct answer gives coin</span>
+    <span>Wrong answer loses heart</span>
+    <span>Power-ups still cost coins</span>
+    <span>0 lives restarts game</span>
+    <span>Victory screen appears</span>
+    <span>New upgrade actually works</span>
+  </div>
+
+  <label class="field" for="q-regression">What broke, or what did you prove still works? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-regression" data-save data-label="Regression hunt result"></textarea>
+</section>
+
+<!-- 6 SHIP -->
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">6 · Ship It: Before and After Demo</h2></header>
+  <p>Show your old version first, then your remixed version. Say exactly what changed.
+  Safety check still applies: no full names, no kid photos, no location, no contact info,
+  no mean endings, no copied logos.</p>
+
+  <label class="field" for="q-demo">Write your 20-second demo script. "Before my game did ____. Now it does ____." <span class="savehint">saved ✓</span></label>
+  <textarea id="q-demo" data-save data-label="My before-after demo script"></textarea>
+</section>
+
+<div class="notebook">
+  <h3>📓 My notebook</h3>
+  <p>Everything you typed today is saved on this computer. Download a copy to show your family or keep forever.</p>
+  <button class="btn sun" onclick="downloadNotebook('Week 3')">Download my answers</button>
+</div>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Week 3</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+/* ---- Prompt Repair Shop ---- */
+const PR = [
+  {
+    problem: "You want AI to fix a bug where the coin counter goes negative after restart.",
+    a: "fix the coins",
+    b: "The coin counter shows -1 after I press Restart. Fix only the restart coin reset. Do not change questions, lives, power-ups, or styling.",
+    win: "b",
+    why: "Specific bug + when it happens + what not to change."
+  },
+  {
+    problem: "You want one sound when the player wins, but no sounds anywhere else.",
+    a: "Add a short victory sound only on the win screen. Do not add background music or sounds to buttons.",
+    b: "make the game sound cooler",
+    win: "a",
+    why: "It names the exact moment and sets a boundary."
+  },
+  {
+    problem: "You want the game to look more magical without changing the rules.",
+    a: "make it better",
+    b: "Change only the visual style: magical colors, glowing buttons, and a larger scene title. Keep all rules and JavaScript behavior the same.",
+    win: "b",
+    why: "It separates style changes from rule changes."
+  },
+  {
+    problem: "AI added a timer, but now the Skip power-up stopped working.",
+    a: "The new timer works, but Skip no longer moves to the next question. Fix only the Skip button while keeping the timer behavior.",
+    b: "you broke skip, redo the game",
+    win: "a",
+    why: "It reports what works, what broke, and asks for a small repair."
+  }
+];
+let prI = 0, prS = 0;
+function prStart(){ prI = 0; prS = 0; prNext(); }
+function prNext(){
+  const q = PR[prI];
+  document.getElementById("pr-question").textContent = q.problem;
+  document.getElementById("pr-feedback").textContent = "";
+  document.getElementById("pr-round").textContent = prI + 1;
+  document.getElementById("pr-choices").innerHTML =
+    `<button class="btn" onclick="prAnswer('a')">Prompt A</button>
+     <button class="btn" onclick="prAnswer('b')">Prompt B</button>`;
+}
+function prAnswer(choice){
+  const q = PR[prI], fb = document.getElementById("pr-feedback");
+  const right = choice === q.win;
+  if (right) prS++;
+  fb.className = "feedback " + (right ? "good" : "bad");
+  fb.textContent = (right ? "✓ Repair approved! " : "✗ Needs clearer instructions. ") + q.why;
+  document.getElementById("pr-score").textContent = prS;
+  document.getElementById("pr-choices").innerHTML =
+    `<div class="card" style="text-align:left;max-width:720px;margin:0 auto">
+      <strong>Prompt A:</strong> ${q.a}<br><br>
+      <strong>Prompt B:</strong> ${q.b}
+    </div>
+    <p style="width:100%;margin:12px 0 0">${prI + 1 < PR.length
+      ? '<button class="btn primary" onclick="prI++;prNext()">Next repair ▶</button>'
+      : '<button class="btn mint" onclick="prEnd()">Finish 🏁</button>'}</p>`;
+}
+function prEnd(){
+  document.getElementById("pr-question").textContent =
+    `You approved ${prS}/4 repairs. Today's power move: ask for one clear change, then test what might have broken.`;
+  document.getElementById("pr-choices").innerHTML = '<button class="btn" onclick="prStart()">Play again ↺</button>';
+  document.getElementById("pr-feedback").textContent = "";
+}
+
+/* ---- Juice demo ---- */
+function plainDemo(){
+  const target = document.getElementById("juice-demo");
+  target.classList.remove("juiced");
+  target.textContent = "+1 coin";
+  document.getElementById("juice-feedback").textContent = "Plain works, but it feels quiet.";
+}
+function juiceDemo(){
+  const target = document.getElementById("juice-demo");
+  target.classList.remove("juiced");
+  void target.offsetWidth;
+  target.classList.add("juiced");
+  target.textContent = "+1 coin!";
+  document.getElementById("juice-feedback").textContent = "Same rule, more feeling. That is juice.";
+}
+
+/* ---- Remix prompt builder ---- */
+function val(id, fallback){
+  const el = document.getElementById(id);
+  return (el && el.value.trim()) || fallback;
+}
+function buildRemixPrompt(){
+  document.getElementById("r-out").value =
+`You are my coding buddy. I have an existing Week 2 quest game as one HTML file. Help me remix it for Week 3.
+
+IMPORTANT:
+- Change only what I ask for.
+- Keep the old game rules working.
+- Do not remove any existing questions, scenes, lives, coins, power-ups, restart behavior, or victory screen.
+- After the code, explain what changed like I am 11.
+
+GAME NAME:
+${val("r-title", "My Quest Game")}
+
+MUST NOT BREAK:
+${val("r-keep", "Keep the original quest rules working.")}
+
+MY FIVE UPGRADES:
+1. Juice effect:
+${val("r-juice", "Add a small celebration when the player answers correctly.")}
+
+2. New mechanic:
+${val("r-mechanic", "Streak bonus: 3 correct in a row gives +2 coins")}
+
+3. Visual change:
+${val("r-visual", "Make each scene look more different.")}
+
+4. Fix or improvement:
+${val("r-fix", "Make instructions clearer.")}
+
+5. Wild card:
+${val("r-wild", "Add a secret title on the win screen.")}
+
+REGRESSION TEST CHECKLIST:
+Before you say it is done, check these in the code:
+- Correct answers still add coins.
+- Wrong answers still lose lives.
+- Power-ups still cost the right number of coins.
+- 0 lives still restarts from Scene 1.
+- Victory still happens after the final scene.
+- My new mechanic works.
+
+If a requested upgrade is risky, tell me first and suggest a simpler version.`;
+}
+function copyRemixPrompt(){
+  navigator.clipboard.writeText(document.getElementById("r-out").value || "");
+  const c = document.getElementById("r-copied");
+  c.classList.add("show"); setTimeout(()=>c.classList.remove("show"), 1200);
+}
+</script>
+</body>
+</html>
