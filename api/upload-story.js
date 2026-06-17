@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
     const { put } = await import('@vercel/blob');
 
     await put(`stories/${slug}/index.html`, html, {
-      access: 'public',
+      access: 'private',
       contentType: 'text/html; charset=utf-8',
       allowOverwrite: false
     });
@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
       student,
       uploadedAt: new Date().toISOString()
     }, null, 2), {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json; charset=utf-8',
       allowOverwrite: false
     });

@@ -21,7 +21,7 @@ Pixel/pixel, Teacher/orbit2026.
 
 ## Vercel storage
 Connect a Vercel Blob store to the project so Vercel creates
-`BLOB_READ_WRITE_TOKEN`. Without it, the static lessons still work, but
+`BLOB_READ_WRITE_TOKEN`. Choose **Private** access for the store. Without it, the static lessons still work, but
 "Save to Teacher Notebook" and story uploads will show a friendly storage
 message instead of saving.
 

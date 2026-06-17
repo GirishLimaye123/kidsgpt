@@ -15,14 +15,12 @@ module.exports = async function handler(req, res) {
   if (!validSlug(slug)) return json(res, 404, { error: 'Story not found.' });
 
   try {
-    const { list } = await import('@vercel/blob');
-    const result = await list({ prefix: `stories/${slug}/index.html`, limit: 1 });
-    const blob = result.blobs && result.blobs[0];
-    if (!blob) return json(res, 404, { error: 'Story not found.' });
-
-    const upstream = await fetch(blob.url);
-    if (!upstream.ok) return json(res, 404, { error: 'Story not found.' });
-    const html = await upstream.text();
+    const { get } = await import('@vercel/blob');
+    const result = await get(`stories/${slug}/index.html`, { access: 'private' });
+    if (!result || result.statusCode !== 200 || !result.stream) {
+      return json(res, 404, { error: 'Story not found.' });
+    }
+    const html = await new Response(result.stream).text();
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

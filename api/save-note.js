@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
     const { put } = await import('@vercel/blob');
     const pathname = `teacher-notes/${week}/${student}-${Date.now()}.json`;
     await put(pathname, JSON.stringify(entry, null, 2), {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json; charset=utf-8',
       allowOverwrite: false
     });
