@@ -1,0 +1,12 @@
+{
+  "name": "kidsgpt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.4.0"
+  }
+}

@@ -3,21 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Week 3: Remix Lab — KIDSGPT</title>
+<title>Week 3: The Story of You — KIDSGPT</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
-.remix-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
-.remix-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;box-shadow:var(--shadow-sm)}
-.remix-card h3{margin-bottom:4px}
-.demo-screen{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:18px;margin:14px 0;text-align:center}
-.demo-target{display:inline-block;border:2px solid var(--ink);border-radius:12px;padding:12px 18px;background:var(--guard);font-family:var(--font-display);font-weight:800;box-shadow:var(--shadow-sm)}
-.demo-target.juiced{animation:pop .5s ease;background:var(--launch);color:#fff}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-2deg)}100%{transform:scale(1)}}
-.tiny-checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
-.tiny-checklist span{display:block;border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700}
-@media (max-width:760px){.remix-grid,.tiny-checklist{grid-template-columns:1fr}}
+.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.story-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;box-shadow:var(--shadow-sm)}
+.story-card h3{margin-bottom:4px}
+.detective-badge{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);border-radius:999px;background:var(--guard);padding:5px 12px;font-family:var(--font-mono);font-size:.78rem;font-weight:700;box-shadow:2px 2px 0 var(--ink)}
+.poem-lines{display:grid;gap:10px;margin-top:10px}
+.poem-line{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:start}
+.poem-line span{font-family:var(--font-mono);font-size:.78rem;font-weight:700;border:2px solid var(--ink);border-radius:8px;background:var(--guard);padding:8px;text-align:center}
+.tool-note{border:2px dashed var(--ink);border-radius:12px;background:#fff;padding:14px;margin:12px 0}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.78rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:4px 10px;box-shadow:2px 2px 0 var(--ink)}
+.status-pill.good{background:#E8FAF5;color:#0B755F}
+.status-pill.bad{background:#FFF0EE;color:#B93124}
+.share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
+.share-box a{font-weight:700;color:var(--design)}
+.mini-rule{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mini-rule span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700;text-align:center}
+@media (max-width:760px){.story-grid,.mini-rule{grid-template-columns:1fr}.poem-line{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -37,134 +43,172 @@
 
 <section class="section tight">
   <p class="eyebrow">Module 1 · Week 3</p>
-  <h1>Remix Lab</h1>
-  <p style="max-width:62ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
-  Today you take your Week 2 quest game and level it up. The trick is not just asking AI
-  for cooler stuff. The trick is changing the game <strong>on purpose</strong>, testing after
-  each change, and catching anything AI accidentally breaks.</p>
+  <h1>The Story of You</h1>
+  <p style="max-width:64ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  Today you interview a real human, turn good listening into a 6-line poem, then turn that poem into
+  a private-ish 6-slide story deck. AI can polish the words, but the human has to make the person
+  feel understood.</p>
   <div class="pips"><span class="pip brain"></span><span class="pip build"></span><span class="pip design"></span><span class="pip guard"></span><span class="pip launch"></span></div>
 </section>
 
 <!-- 1 WARM-UP -->
 <section class="lesson-section">
-  <header><span class="chip build">🕹️</span><h2 style="margin:0">1 · Warm-up: Prompt Repair Shop</h2></header>
-  <p>AI does what you ask for, not always what you meant. Pick the prompt that gives AI the clearest repair order.</p>
+  <header><span class="chip design">🕵️</span><h2 style="margin:0">1 · Warm-up: Story Detective Academy</h2></header>
+  <p>Choose the better interview question. At the end, you unlock the three Story Detective rules.</p>
   <div class="game-stage">
-    <p class="big" id="pr-question">Press start!</p>
-    <div class="choice-row" id="pr-choices">
-      <button class="btn primary" onclick="prStart()">Start repair shop ▶</button>
+    <div class="progress"><div id="sd-bar"></div></div>
+    <p class="big" id="sd-question">Press start!</p>
+    <div class="choice-row" id="sd-choices">
+      <button class="btn primary" onclick="sdStart()">Start detective training ▶</button>
     </div>
-    <p class="feedback" id="pr-feedback"></p>
-    <div class="scoreboard"><span>REPAIRS <span id="pr-score">0</span></span><span>ROUND <span id="pr-round">0</span>/4</span></div>
+    <p class="feedback" id="sd-feedback"></p>
+    <div class="scoreboard"><span>BADGES <span id="sd-score">0</span></span><span>CASE <span id="sd-round">0</span>/4</span></div>
+  </div>
+  <div class="mini-rule">
+    <span>Ask open questions</span>
+    <span>Say "tell me more"</span>
+    <span>The person owns their story</span>
   </div>
 </section>
 
 <!-- 2 AI TALK -->
 <section class="lesson-section">
-  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: Iteration</h2></header>
-  <p><strong>Big idea:</strong> pros almost never keep the first version. They make one change,
-  test it, make another change, test again. That loop is called <em>iteration</em>.</p>
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: Permission And What Looks Real</h2></header>
+  <p><strong>Big idea:</strong> Today we are making a story about a real person. AI can help
+  with words and images, but it does not know what is okay to share. Also, AI can make pictures
+  that look real even when they are not real. If it looks real, be extra careful.</p>
 
-  <label class="field" for="q-iterate">What does "iteration" mean in your own words? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-iterate" data-save data-label="What iteration means"></textarea>
+  <label class="field" for="q-permission">What should we ask permission before including in someone's story? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-permission" data-save data-label="What needs permission"></textarea>
 
-  <label class="field" for="q-ai-break">Why might AI accidentally break an old feature while adding a new one? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-ai-break" data-save data-label="Why AI might break an old feature"></textarea>
-
-  <label class="field" for="q-one-change">What is one change you want to make to your quest game today? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-one-change" data-save data-label="One change I want today"></textarea>
+  <label class="field" for="q-real-images">If AI can make images that look real, what should we be careful about? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-real-images" data-save data-label="What to be careful about with realistic AI images"></textarea>
 </section>
 
 <!-- 3 DESIGN CORNER -->
 <section class="lesson-section">
-  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Juice</h2></header>
-  <p><strong>Today's design skill:</strong> juice. Juice is the tiny movement, sound, color,
-  sparkle, shake, or celebration that makes a game feel alive.</p>
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Facts Become Stories</h2></header>
+  <p><strong>Today's design skill:</strong> listening for the feeling inside a fact. A fact is true
+  information. A story is what we do with that information so another person feels something.</p>
+  <p class="tool-note"><strong>Kid phrase:</strong> Facts are ingredients. Story is the recipe.</p>
 
-  <div class="demo-screen">
-    <p>Try it: same reward, different feeling.</p>
-    <span class="demo-target" id="juice-demo">+1 coin</span>
-    <p style="margin-top:16px">
-      <button class="btn" onclick="plainDemo()">Plain reward</button>
-      <button class="btn violet" onclick="juiceDemo()">Juiced reward</button>
-    </p>
-    <p class="feedback" id="juice-feedback"></p>
+  <div class="story-grid">
+    <div class="story-card"><h3>Fact</h3><p>Maya likes soccer.</p></div>
+    <div class="story-card"><h3>Feeling</h3><p>Fast, brave, part of a team.</p></div>
+    <div class="story-card"><h3>Story line</h3><p>Maya runs toward goals with bright, brave feet.</p></div>
   </div>
 
-  <div class="remix-grid">
-    <div class="remix-card"><h3>Motion</h3><p>Pop, slide, shake, bounce, or pulse when something happens.</p></div>
-    <div class="remix-card"><h3>Sound</h3><p>A tiny win sound, soft mistake sound, or final victory sound.</p></div>
-    <div class="remix-card"><h3>Reward</h3><p>Confetti, coin burst, streak badge, title upgrade, or new animation.</p></div>
-  </div>
+  <label class="field" for="q-practice-fact">Practice: write one fact about your partner. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-practice-fact" data-save data-label="Practice fact"></textarea>
 
-  <label class="field" for="q-juice">Plan one juice effect for your game. What happens, and when? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-juice" data-save data-label="My juice effect plan"></textarea>
+  <label class="field" for="q-practice-feeling">What feeling could be inside that fact? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-practice-feeling" data-save data-label="Feeling inside the fact"></textarea>
 </section>
 
-<!-- 4 BUILD -->
+<!-- 4 INTERVIEW -->
 <section class="lesson-section">
-  <header><span class="chip build">🔨</span><h2 style="margin:0">4 · Build Sprint: Five Upgrades</h2></header>
-  <p>Fill the remix plan, then copy the prompt into AI with your Week 2 game file. Ask for one upgrade batch, test, then ask for fixes.</p>
+  <header><span class="chip build">🎙️</span><h2 style="margin:0">4 · Partner Interview</h2></header>
+  <p>Partner A interviews Partner B, then switch. Ask. Listen. Write. Do not argue with their answers.</p>
 
-  <label class="field" for="r-title">Your Week 2 game name <span class="savehint">saved ✓</span></label>
-  <input type="text" id="r-title" data-save data-label="Week 2 game name">
+  <label class="field" for="i-partner">Partner nickname for publishing <span class="savehint">saved ✓</span></label>
+  <input type="text" id="i-partner" data-save data-label="Partner nickname">
 
-  <label class="field" for="r-keep">What must NOT break? <span class="savehint">saved ✓</span></label>
-  <textarea id="r-keep" data-save data-label="Things that must not break">Keep lives, coins, power-ups, scene order, wrong-answer life loss, restart at 0 lives, and victory screen working.</textarea>
+  <label class="field" for="i-likes">What are 3 things they really like? <span class="savehint">saved ✓</span></label>
+  <textarea id="i-likes" data-save data-label="Three things partner likes"></textarea>
 
-  <label class="field" for="r-juice">Upgrade 1: one juice effect <span class="savehint">saved ✓</span></label>
-  <textarea id="r-juice" data-save data-label="Upgrade 1 juice effect">Add a coin pop and small celebration when the player answers correctly.</textarea>
+  <label class="field" for="i-happy">Tell me about a moment that made you happy. <span class="savehint">saved ✓</span></label>
+  <textarea id="i-happy" data-save data-label="Happy moment"></textarea>
 
-  <label class="field" for="r-mechanic">Upgrade 2: one new mechanic <span class="savehint">saved ✓</span></label>
-  <select id="r-mechanic" data-save data-label="Upgrade 2 new mechanic">
-    <option>Streak bonus: 3 correct in a row gives +2 coins</option>
-    <option>Boss scene: final challenger has 2 hearts</option>
-    <option>Mystery chest: one random scene gives a bonus</option>
-    <option>Timer mode: answer before time runs out</option>
-    <option>Trap question: one question costs 2 lives if missed</option>
+  <label class="field" for="i-power">What is something you are good at, or something people like about you? <span class="savehint">saved ✓</span></label>
+  <textarea id="i-power" data-save data-label="Quiet power"></textarea>
+
+  <label class="field" for="i-future">What is something you want to try, learn, build, or explore someday? <span class="savehint">saved ✓</span></label>
+  <textarea id="i-future" data-save data-label="Future adventure"></textarea>
+
+  <label class="field" for="i-private">What should I NOT include because it feels private, wrong, or embarrassing? <span class="savehint">saved ✓</span></label>
+  <textarea id="i-private" data-save data-label="Do not include"></textarea>
+
+  <p style="margin-top:16px"><button class="btn sun" onclick="saveTeacherNotebook()">Save to Teacher Notebook</button> <span id="teacher-save-status" class="status-pill">not saved yet</span></p>
+</section>
+
+<!-- 5 POEM MAKER -->
+<section class="lesson-section">
+  <header><span class="chip brain">🪄</span><h2 style="margin:0">5 · Poem Maker</h2></header>
+  <p>First make a 6-line poem. One line will become one slide. Make the poem kind, true, and specific.</p>
+  <p><button class="btn violet" onclick="buildPoemPrompt()">Build my poem prompt</button></p>
+  <textarea id="poem-prompt" rows="12" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+  <p><button class="btn small" onclick="copyText('poem-prompt','poem-copied')">Copy poem prompt</button> <span id="poem-copied" class="savehint">copied ✓</span></p>
+
+  <label class="field" for="final-poem">Paste your final 6-line poem here after you improve it with AI. <span class="savehint">saved ✓</span></label>
+  <textarea id="final-poem" data-save data-label="Final 6-line poem" rows="8"></textarea>
+
+  <p><button class="btn" onclick="buildImprovePrompt()">Build an improve-my-poem prompt</button></p>
+  <textarea id="improve-prompt" rows="8" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+  <p><button class="btn small" onclick="copyText('improve-prompt','improve-copied')">Copy improve prompt</button> <span id="improve-copied" class="savehint">copied ✓</span></p>
+</section>
+
+<!-- 6 DECK DESIGN -->
+<section class="lesson-section">
+  <header><span class="chip design">🎨</span><h2 style="margin:0">6 · Deck Design Lab</h2></header>
+  <p>Now decide what the deck should look and feel like before asking AI to code it.</p>
+
+  <label class="field" for="d-title">Deck title <span class="savehint">saved ✓</span></label>
+  <input type="text" id="d-title" data-save data-label="Deck title" value="The Story of">
+
+  <label class="field" for="d-vibe">Deck style <span class="savehint">saved ✓</span></label>
+  <select id="d-vibe" data-save data-label="Deck style">
+    <option>Warm storybook</option>
+    <option>Bright comic book</option>
+    <option>Space adventure</option>
+    <option>Nature journal</option>
+    <option>Sports card energy</option>
+    <option>Cozy scrapbook</option>
   </select>
 
-  <label class="field" for="r-visual">Upgrade 3: one visual change <span class="savehint">saved ✓</span></label>
-  <textarea id="r-visual" data-save data-label="Upgrade 3 visual change">Make each scene feel more different with a new color palette and bigger scene title.</textarea>
+  <label class="field" for="d-colors">Three colors for the deck <span class="savehint">saved ✓</span></label>
+  <input type="text" id="d-colors" data-save data-label="Deck colors" value="teal, yellow, white">
 
-  <label class="field" for="r-fix">Upgrade 4: one fix or improvement <span class="savehint">saved ✓</span></label>
-  <textarea id="r-fix" data-save data-label="Upgrade 4 fix">Make instructions clearer before the first question.</textarea>
+  <label class="field" for="d-symbols">Six simple visual symbols, one per line <span class="savehint">saved ✓</span></label>
+  <textarea id="d-symbols" data-save data-label="Visual symbols" rows="7" placeholder="star&#10;soccer ball&#10;mountain&#10;book&#10;rocket&#10;heart"></textarea>
 
-  <label class="field" for="r-wild">Upgrade 5: wild card <span class="savehint">saved ✓</span></label>
-  <textarea id="r-wild" data-save data-label="Upgrade 5 wild card">Add a secret title on the win screen based on final coins and lives.</textarea>
-
-  <p style="margin-top:16px"><button class="btn violet" onclick="buildRemixPrompt()">Build my remix prompt 🪄</button></p>
-  <textarea id="r-out" rows="15" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
-  <p><button class="btn small" onclick="copyRemixPrompt()">Copy prompt</button> <span id="r-copied" class="savehint">copied ✓</span></p>
+  <label class="field" for="d-voice">Voice option <span class="savehint">saved ✓</span></label>
+  <select id="d-voice" data-save data-label="Voice option">
+    <option>Browser Read Aloud button</option>
+    <option>Live narration by the creator</option>
+    <option>Both Read Aloud and live narration</option>
+  </select>
 </section>
 
-<!-- 5 TRUST CHECK -->
+<!-- 7 SLIDE PROMPT -->
 <section class="lesson-section">
-  <header><span class="chip guard">🛡️</span><h2 style="margin:0">5 · Trust Check: Regression Hunt</h2></header>
-  <p>A <strong>regression</strong> is when a new change secretly breaks something that used to work.
-  After AI edits your game, test the old rules again.</p>
-  <div class="tiny-checklist">
-    <span>Correct answer gives coin</span>
-    <span>Wrong answer loses heart</span>
-    <span>Power-ups still cost coins</span>
-    <span>0 lives restarts game</span>
-    <span>Victory screen appears</span>
-    <span>New upgrade actually works</span>
+  <header><span class="chip build">🔨</span><h2 style="margin:0">7 · Build Sprint: 6-Slide Story Deck</h2></header>
+  <p>Generate the HTML prompt, paste it into AI, then upload the finished HTML file here.</p>
+  <p><button class="btn violet" onclick="buildDeckPrompt()">Build my slide deck prompt</button></p>
+  <textarea id="deck-prompt" rows="16" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+  <p><button class="btn small" onclick="copyText('deck-prompt','deck-copied')">Copy deck prompt</button> <span id="deck-copied" class="savehint">copied ✓</span></p>
+
+  <div class="tool-note">
+    <span class="detective-badge">Private-ish share</span>
+    <p>Upload only after checking privacy. The page gets a random unlisted URL. It is not in the gallery, but anyone with the link can open it.</p>
+    <label class="field" for="story-file">Upload your finished HTML file</label>
+    <input type="file" id="story-file" accept=".html,text/html">
+    <label class="field" for="story-html">Or paste the finished HTML here</label>
+    <textarea id="story-html" rows="8" style="font-family:var(--font-mono);font-size:.85rem"></textarea>
+    <p><button class="btn mint" onclick="uploadStory()">Upload and get private URL</button> <span id="upload-status" class="status-pill">not uploaded yet</span></p>
+    <div id="share-result" class="share-box" hidden></div>
   </div>
-
-  <label class="field" for="q-regression">What broke, or what did you prove still works? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-regression" data-save data-label="Regression hunt result"></textarea>
 </section>
 
-<!-- 6 SHIP -->
+<!-- 8 TRUST + SHIP -->
 <section class="lesson-section">
-  <header><span class="chip launch">🚀</span><h2 style="margin:0">6 · Ship It: Before and After Demo</h2></header>
-  <p>Show your old version first, then your remixed version. Say exactly what changed.
-  Safety check still applies: no full names, no kid photos, no location, no contact info,
-  no mean endings, no copied logos.</p>
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">8 · Trust Check And Partner Premiere</h2></header>
+  <p>Before sharing: true, kind, specific, private. Then show your partner and let them request one change.</p>
 
-  <label class="field" for="q-demo">Write your 20-second demo script. "Before my game did ____. Now it does ____." <span class="savehint">saved ✓</span></label>
-  <textarea id="q-demo" data-save data-label="My before-after demo script"></textarea>
+  <label class="field" for="q-partner-liked">Partner said: "I liked..." <span class="savehint">saved ✓</span></label>
+  <textarea id="q-partner-liked" data-save data-label="Partner liked"></textarea>
+
+  <label class="field" for="q-partner-change">Partner said: "Please change..." <span class="savehint">saved ✓</span></label>
+  <textarea id="q-partner-change" data-save data-label="Partner requested change"></textarea>
 </section>
 
 <div class="notebook">
@@ -182,139 +226,209 @@
 <script>
 requireLogin();
 
-/* ---- Prompt Repair Shop ---- */
-const PR = [
+const SD = [
   {
-    problem: "You want AI to fix a bug where the coin counter goes negative after restart.",
-    a: "fix the coins",
-    b: "The coin counter shows -1 after I press Restart. Fix only the restart coin reset. Do not change questions, lives, power-ups, or styling.",
-    win: "b",
-    why: "Specific bug + when it happens + what not to change."
+    prompt: 'Your partner says: "I like soccer."',
+    a: 'Do you like soccer because it is fun?',
+    b: 'Tell me about a soccer moment you remember.',
+    win: 'b',
+    why: 'B opens the door to a story. A already guesses the answer.'
   },
   {
-    problem: "You want one sound when the player wins, but no sounds anywhere else.",
-    a: "Add a short victory sound only on the win screen. Do not add background music or sounds to buttons.",
-    b: "make the game sound cooler",
-    win: "a",
-    why: "It names the exact moment and sets a boundary."
+    prompt: 'You want to know their dream adventure.',
+    a: "Wouldn't it be cool if your story had dragons?",
+    b: 'What kind of adventure would feel like you?',
+    win: 'b',
+    why: 'B lets the person own the story. A pushes your idea into their answer.'
   },
   {
-    problem: "You want the game to look more magical without changing the rules.",
-    a: "make it better",
-    b: "Change only the visual style: magical colors, glowing buttons, and a larger scene title. Keep all rules and JavaScript behavior the same.",
-    win: "b",
-    why: "It separates style changes from rule changes."
+    prompt: 'Your partner says: "I like drawing."',
+    a: 'Cool. Next question.',
+    b: 'What do you like drawing most? Tell me more.',
+    win: 'b',
+    why: '"Tell me more" is a Story Detective secret tool.'
   },
   {
-    problem: "AI added a timer, but now the Skip power-up stopped working.",
-    a: "The new timer works, but Skip no longer moves to the next question. Fix only the Skip button while keeping the timer behavior.",
-    b: "you broke skip, redo the game",
-    win: "a",
-    why: "It reports what works, what broke, and asks for a small repair."
+    prompt: 'You are about to make a public-ish story deck.',
+    a: 'Can I include anything you told me?',
+    b: 'What should I not include because it feels private or embarrassing?',
+    win: 'b',
+    why: 'B is clearer. People own their stories, and they get to set boundaries.'
   }
 ];
-let prI = 0, prS = 0;
-function prStart(){ prI = 0; prS = 0; prNext(); }
-function prNext(){
-  const q = PR[prI];
-  document.getElementById("pr-question").textContent = q.problem;
-  document.getElementById("pr-feedback").textContent = "";
-  document.getElementById("pr-round").textContent = prI + 1;
-  document.getElementById("pr-choices").innerHTML =
-    `<button class="btn" onclick="prAnswer('a')">Prompt A</button>
-     <button class="btn" onclick="prAnswer('b')">Prompt B</button>`;
+let sdI = 0, sdS = 0;
+function sdStart(){ sdI = 0; sdS = 0; sdNext(); }
+function sdNext(){
+  const q = SD[sdI];
+  document.getElementById('sd-question').textContent = q.prompt;
+  document.getElementById('sd-feedback').textContent = '';
+  document.getElementById('sd-round').textContent = sdI + 1;
+  document.getElementById('sd-bar').style.width = (sdI / SD.length * 100) + '%';
+  document.getElementById('sd-choices').innerHTML =
+    `<button class="btn" onclick="sdAnswer('a')">A: ${q.a}</button>
+     <button class="btn" onclick="sdAnswer('b')">B: ${q.b}</button>`;
 }
-function prAnswer(choice){
-  const q = PR[prI], fb = document.getElementById("pr-feedback");
+function sdAnswer(choice){
+  const q = SD[sdI], fb = document.getElementById('sd-feedback');
   const right = choice === q.win;
-  if (right) prS++;
-  fb.className = "feedback " + (right ? "good" : "bad");
-  fb.textContent = (right ? "✓ Repair approved! " : "✗ Needs clearer instructions. ") + q.why;
-  document.getElementById("pr-score").textContent = prS;
-  document.getElementById("pr-choices").innerHTML =
-    `<div class="card" style="text-align:left;max-width:720px;margin:0 auto">
-      <strong>Prompt A:</strong> ${q.a}<br><br>
-      <strong>Prompt B:</strong> ${q.b}
-    </div>
-    <p style="width:100%;margin:12px 0 0">${prI + 1 < PR.length
-      ? '<button class="btn primary" onclick="prI++;prNext()">Next repair ▶</button>'
-      : '<button class="btn mint" onclick="prEnd()">Finish 🏁</button>'}</p>`;
+  if (right) sdS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = (right ? '✓ Detective move! ' : '✗ Try the more open question. ') + q.why;
+  document.getElementById('sd-score').textContent = sdS;
+  sdI++;
+  document.getElementById('sd-choices').innerHTML = sdI < SD.length
+    ? '<button class="btn primary" onclick="sdNext()">Next case ▶</button>'
+    : '<button class="btn mint" onclick="sdEnd()">Unlock rules 🏁</button>';
 }
-function prEnd(){
-  document.getElementById("pr-question").textContent =
-    `You approved ${prS}/4 repairs. Today's power move: ask for one clear change, then test what might have broken.`;
-  document.getElementById("pr-choices").innerHTML = '<button class="btn" onclick="prStart()">Play again ↺</button>';
-  document.getElementById("pr-feedback").textContent = "";
+function sdEnd(){
+  document.getElementById('sd-bar').style.width = '100%';
+  document.getElementById('sd-question').textContent =
+    `You solved ${sdS}/4 cases. Now use the rules on a real human: ask open questions, say "tell me more," and let the person own their story.`;
+  document.getElementById('sd-choices').innerHTML = '<button class="btn" onclick="sdStart()">Play again ↺</button>';
+  document.getElementById('sd-feedback').textContent = '';
 }
 
-/* ---- Juice demo ---- */
-function plainDemo(){
-  const target = document.getElementById("juice-demo");
-  target.classList.remove("juiced");
-  target.textContent = "+1 coin";
-  document.getElementById("juice-feedback").textContent = "Plain works, but it feels quiet.";
-}
-function juiceDemo(){
-  const target = document.getElementById("juice-demo");
-  target.classList.remove("juiced");
-  void target.offsetWidth;
-  target.classList.add("juiced");
-  target.textContent = "+1 coin!";
-  document.getElementById("juice-feedback").textContent = "Same rule, more feeling. That is juice.";
-}
-
-/* ---- Remix prompt builder ---- */
-function val(id, fallback){
+function value(id, fallback){
   const el = document.getElementById(id);
   return (el && el.value.trim()) || fallback;
 }
-function buildRemixPrompt(){
-  document.getElementById("r-out").value =
-`You are my coding buddy. I have an existing Week 2 quest game as one HTML file. Help me remix it for Week 3.
-
-IMPORTANT:
-- Change only what I ask for.
-- Keep the old game rules working.
-- Do not remove any existing questions, scenes, lives, coins, power-ups, restart behavior, or victory screen.
-- After the code, explain what changed like I am 11.
-
-GAME NAME:
-${val("r-title", "My Quest Game")}
-
-MUST NOT BREAK:
-${val("r-keep", "Keep the original quest rules working.")}
-
-MY FIVE UPGRADES:
-1. Juice effect:
-${val("r-juice", "Add a small celebration when the player answers correctly.")}
-
-2. New mechanic:
-${val("r-mechanic", "Streak bonus: 3 correct in a row gives +2 coins")}
-
-3. Visual change:
-${val("r-visual", "Make each scene look more different.")}
-
-4. Fix or improvement:
-${val("r-fix", "Make instructions clearer.")}
-
-5. Wild card:
-${val("r-wild", "Add a secret title on the win screen.")}
-
-REGRESSION TEST CHECKLIST:
-Before you say it is done, check these in the code:
-- Correct answers still add coins.
-- Wrong answers still lose lives.
-- Power-ups still cost the right number of coins.
-- 0 lives still restarts from Scene 1.
-- Victory still happens after the final scene.
-- My new mechanic works.
-
-If a requested upgrade is risky, tell me first and suggest a simpler version.`;
+function poemLines(){
+  return value('final-poem', '').split(/\n+/).map(s => s.trim()).filter(Boolean).slice(0, 6);
 }
-function copyRemixPrompt(){
-  navigator.clipboard.writeText(document.getElementById("r-out").value || "");
-  const c = document.getElementById("r-copied");
-  c.classList.add("show"); setTimeout(()=>c.classList.remove("show"), 1200);
+function buildPoemPrompt(){
+  document.getElementById('poem-prompt').value =
+`I am making a kind 6-line poem about my class partner.
+
+Interview notes:
+- Partner nickname: ${value('i-partner', '[nickname]')}
+- Things they like: ${value('i-likes', '[notes]')}
+- Happy moment: ${value('i-happy', '[notes]')}
+- Quiet power / strength: ${value('i-power', '[notes]')}
+- Future adventure: ${value('i-future', '[notes]')}
+- Do NOT include: ${value('i-private', '[private or embarrassing things]')}
+
+Create a 6-line poem.
+Rules:
+- One line per future slide.
+- Use simple words for 10-11 year olds.
+- Make it kind, true, warm, and specific.
+- Do not include private information.
+- Do not exaggerate too much.
+- Do not make fun of the person.
+- Do not use full names, addresses, school names, or real locations.
+- Each line should be 6-12 words.`;
+}
+function buildImprovePrompt(){
+  document.getElementById('improve-prompt').value =
+`Here is my 6-line poem:
+${value('final-poem', '[paste poem here]')}
+
+Please improve it.
+Rules:
+- Keep exactly 6 lines.
+- Make it warmer and more specific.
+- Make it less cheesy.
+- Use words a 10-year-old understands.
+- Keep the facts accurate.
+- Do not include anything private or embarrassing.
+- Give me 2 options for each line.`;
+}
+function buildDeckPrompt(){
+  const lines = poemLines();
+  const symbols = value('d-symbols', '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+  const partner = value('i-partner', '[nickname]');
+  const rawTitle = value('d-title', '');
+  const title = rawTitle.toLowerCase() === 'the story of' ? `The Story of ${partner}` : (rawTitle || `The Story of ${partner}`);
+  document.getElementById('deck-prompt').value =
+`Build a single HTML file: a 6-slide mini story deck called "${title}".
+
+Audience: my class partner and our small KIDSGPT group.
+Style: ${value('d-vibe', 'Warm storybook')}.
+Colors: ${value('d-colors', 'teal, yellow, white')}.
+Voice option: ${value('d-voice', 'Browser Read Aloud button')}.
+
+Put one poem line on each slide:
+${(lines.length ? lines : ['[line 1]', '[line 2]', '[line 3]', '[line 4]', '[line 5]', '[line 6]']).map((line, i) => `${i + 1}. ${line}`).join('\n')}
+
+Visual symbols:
+${(symbols.length ? symbols : ['simple symbol for each line']).map((symbol, i) => `Slide ${i + 1}: ${symbol}`).join('\n')}
+
+Requirements:
+- Use one slide at a time.
+- Include Back and Next buttons.
+- Include a slide counter.
+- Include a Read Aloud button using browser speechSynthesis.
+- Include one simple visual symbol per slide using HTML/CSS shapes or emoji-style text symbols.
+- Do not use real faces or photos.
+- Do not use famous characters, logos, or brands.
+- Make it kind, readable, and not embarrassing.
+- Put all HTML, CSS, and JavaScript in one file.`;
+}
+function copyText(id, copiedId){
+  navigator.clipboard.writeText(document.getElementById(id).value || '');
+  const c = document.getElementById(copiedId);
+  c.classList.add('show'); setTimeout(() => c.classList.remove('show'), 1200);
+}
+function collectNotebookData(){
+  const data = {};
+  document.querySelectorAll('[data-save]').forEach(el => {
+    data[el.id] = { label: el.dataset.label || el.id, value: el.value || '' };
+  });
+  return data;
+}
+async function saveTeacherNotebook(){
+  const status = document.getElementById('teacher-save-status');
+  status.textContent = 'saving...';
+  status.className = 'status-pill';
+  try {
+    const response = await fetch('/api/save-note', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        week: 'week3-story-of-you',
+        student: (currentStudent() || {}).name || 'unknown',
+        data: collectNotebookData()
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not save.');
+    status.textContent = 'saved to teacher notebook';
+    status.className = 'status-pill good';
+  } catch (error) {
+    status.textContent = error.message || 'backend save unavailable';
+    status.className = 'status-pill bad';
+  }
+}
+async function uploadStory(){
+  const status = document.getElementById('upload-status');
+  const resultBox = document.getElementById('share-result');
+  status.textContent = 'uploading...';
+  status.className = 'status-pill';
+  resultBox.hidden = true;
+  try {
+    const file = document.getElementById('story-file').files[0];
+    let html = document.getElementById('story-html').value.trim();
+    if (file) html = await file.text();
+    if (!html) throw new Error('Add an HTML file or paste HTML first.');
+    const response = await fetch('/api/upload-story', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student: (currentStudent() || {}).name || 'unknown',
+        title: value('d-title', 'Story deck'),
+        html
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not upload.');
+    status.textContent = 'uploaded';
+    status.className = 'status-pill good';
+    resultBox.innerHTML = `<strong>Private-ish URL:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a><p style="margin-bottom:0">Only share this with people who should see the story.</p>`;
+    resultBox.hidden = false;
+  } catch (error) {
+    status.textContent = error.message || 'upload unavailable';
+    status.className = 'status-pill bad';
+  }
 }
 </script>
 </body>
