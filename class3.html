@@ -139,12 +139,8 @@
   <textarea id="poem-prompt" rows="12" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
   <p><button class="btn small" onclick="copyText('poem-prompt','poem-copied')">Copy poem prompt</button> <span id="poem-copied" class="savehint">copied ✓</span></p>
 
-  <label class="field" for="final-poem">Paste your final 6-line poem here after you improve it with AI. <span class="savehint">saved ✓</span></label>
+  <label class="field" for="final-poem">Paste your final 6-line poem here. <span class="savehint">saved ✓</span></label>
   <textarea id="final-poem" data-save data-label="Final 6-line poem" rows="8"></textarea>
-
-  <p><button class="btn" onclick="buildImprovePrompt()">Build an improve-my-poem prompt</button></p>
-  <textarea id="improve-prompt" rows="8" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
-  <p><button class="btn small" onclick="copyText('improve-prompt','improve-copied')">Copy improve prompt</button> <span id="improve-copied" class="savehint">copied ✓</span></p>
 </section>
 
 <!-- 6 DECK DESIGN -->
@@ -317,21 +313,6 @@ Rules:
 - Do not make fun of the person.
 - Do not use full names, addresses, school names, or real locations.
 - Each line should be 6-12 words.`;
-}
-function buildImprovePrompt(){
-  document.getElementById('improve-prompt').value =
-`Here is my 6-line poem:
-${value('final-poem', '[paste poem here]')}
-
-Please improve it.
-Rules:
-- Keep exactly 6 lines.
-- Make it warmer and more specific.
-- Make it less cheesy.
-- Use words a 10-year-old understands.
-- Keep the facts accurate.
-- Do not include anything private or embarrassing.
-- Give me 2 options for each line.`;
 }
 function buildDeckPrompt(){
   const lines = poemLines();
