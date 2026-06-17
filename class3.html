@@ -178,14 +178,39 @@
 <!-- 7 SLIDE PROMPT -->
 <section class="lesson-section">
   <header><span class="chip build">🔨</span><h2 style="margin:0">7 · Build Sprint: 6-Slide Story Deck</h2></header>
-  <p>Generate the HTML prompt, paste it into AI, then upload the finished HTML file here.</p>
+  <p>Generate the HTML prompt and paste it into AI. Do not upload yet. First, show the finished deck to your partner in Part 8.</p>
   <p><button class="btn violet" onclick="buildDeckPrompt()">Build my slide deck prompt</button></p>
   <textarea id="deck-prompt" rows="16" readonly style="font-family:var(--font-mono);font-size:.85rem"></textarea>
   <p><button class="btn small" onclick="copyText('deck-prompt','deck-copied')">Copy deck prompt</button> <span id="deck-copied" class="savehint">copied ✓</span></p>
+</section>
 
+<!-- 8 TRUST CHECK -->
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">8 · Trust Check Before Upload</h2></header>
+  <p>Show the deck to your partner before you upload it. They own their story, so they get to check it first.</p>
+
+  <label class="field" for="q-story-true">Partner check: Is it true? What should I fix? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-story-true" data-save data-label="Partner check: is it true"></textarea>
+
+  <label class="field" for="q-story-kind">Partner check: Is it kind? What feels wrong or embarrassing? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-story-kind" data-save data-label="Partner check: is it kind"></textarea>
+
+  <label class="field" for="q-story-private">Partner check: Is anything too private to share? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-story-private" data-save data-label="Partner check: is anything too private"></textarea>
+
+  <label class="field" for="q-partner-liked">Partner said: "I liked..." <span class="savehint">saved ✓</span></label>
+  <textarea id="q-partner-liked" data-save data-label="Partner liked"></textarea>
+
+  <label class="field" for="q-partner-change">Partner said: "Please change..." <span class="savehint">saved ✓</span></label>
+  <textarea id="q-partner-change" data-save data-label="Partner requested change"></textarea>
+</section>
+
+<!-- 9 UPLOAD -->
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">9 · Upload And Share</h2></header>
   <div class="tool-note">
     <span class="detective-badge">Private-ish share</span>
-    <p>Upload only after checking privacy. The page gets a random unlisted URL. It is not in the gallery, but anyone with the link can open it.</p>
+    <p>Upload only after the partner check. The page gets a random unlisted URL. It is not in the gallery, but anyone with the link can open it.</p>
     <label class="field" for="story-file">Upload your finished HTML file</label>
     <input type="file" id="story-file" accept=".html,text/html">
     <label class="field" for="story-html">Or paste the finished HTML here</label>
@@ -193,18 +218,6 @@
     <p><button class="btn mint" onclick="uploadStory()">Upload and get private URL</button> <span id="upload-status" class="status-pill">not uploaded yet</span></p>
     <div id="share-result" class="share-box" hidden></div>
   </div>
-</section>
-
-<!-- 8 TRUST + SHIP -->
-<section class="lesson-section">
-  <header><span class="chip guard">🛡️</span><h2 style="margin:0">8 · Trust Check And Partner Premiere</h2></header>
-  <p>Before sharing: true, kind, specific, private. Then show your partner and let them request one change.</p>
-
-  <label class="field" for="q-partner-liked">Partner said: "I liked..." <span class="savehint">saved ✓</span></label>
-  <textarea id="q-partner-liked" data-save data-label="Partner liked"></textarea>
-
-  <label class="field" for="q-partner-change">Partner said: "Please change..." <span class="savehint">saved ✓</span></label>
-  <textarea id="q-partner-change" data-save data-label="Partner requested change"></textarea>
 </section>
 
 <div class="notebook">
