@@ -146,16 +146,16 @@
 
 <section class="lesson-section">
   <header><span class="chip guard">🛡️</span><h2 style="margin:0">7 · Trust Check Before Upload</h2></header>
-  <p>Check safety and accuracy before making an external link.</p>
+  <p>Check safety, then think like a public-service designer.</p>
 
   <label class="field" for="q-photo-safe">Is every photo safe? No faces, children, private screens, cards, or documents. <span class="savehint">saved ✓</span></label>
   <textarea id="q-photo-safe" data-save data-label="Photo safety check"></textarea>
 
-  <label class="field" for="q-facts-checked">What facts did a librarian or teacher check? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-facts-checked" data-save data-label="Facts checked"></textarea>
+  <label class="field" for="q-future-build">What would you like to build in the future version of this app? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-future-build" data-save data-label="Future version idea"></textarea>
 
-  <label class="field" for="q-still-verify">What still needs librarian verification? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-still-verify" data-save data-label="Still needs verification"></textarea>
+  <label class="field" for="q-useful-people">How will you find out what would be useful for the people who use the library? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-useful-people" data-save data-label="How to learn what people need"></textarea>
 </section>
 
 <section class="lesson-section">
@@ -188,9 +188,9 @@ requireLogin();
 const ND = [
   {
     prompt: 'AI reads a blurry notice and guesses the event is on July 8.',
-    a: 'Publish July 8 because AI sounded confident.',
-    b: 'Write "date needs librarian verification" until a human checks.',
-    win: 'b',
+    a: 'Write "date needs librarian verification" until a human checks.',
+    b: 'Publish July 8 because AI sounded confident.',
+    win: 'a',
     why: 'Public info should not guess important details.'
   },
   {
@@ -202,16 +202,16 @@ const ND = [
   },
   {
     prompt: 'You have six notices: storytime, tax help, art show, volunteering, chess club, and blood pressure clinic.',
-    a: 'Put them all in one long paragraph.',
-    b: 'Group them by interest and age group.',
-    win: 'b',
+    a: 'Group them by interest and age group.',
+    b: 'Put them all in one long paragraph.',
+    win: 'a',
     why: 'Sorting helps visitors find what matters to them.'
   },
   {
     prompt: 'The librarian says the most common visitor questions are printing, library cards, and events.',
-    a: 'Design around those real needs.',
-    b: 'Ignore that and use only your favorite poster.',
-    win: 'a',
+    a: 'Ignore that and use only your favorite poster.',
+    b: 'Design around those real needs.',
+    win: 'b',
     why: 'Good public-service builders listen before they build.'
   }
 ];
