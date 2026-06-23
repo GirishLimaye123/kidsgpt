@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4: Virtual Noticeboard — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.notice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.notice-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;box-shadow:var(--shadow-sm)}
+.notice-card h3{margin-bottom:8px}
+.notice-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool-note{border:2px dashed var(--ink);border-radius:12px;background:#fff;padding:14px;margin:12px 0}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.78rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:4px 10px;box-shadow:2px 2px 0 var(--ink)}
+.status-pill.good{background:#E8FAF5;color:#0B755F}
+.status-pill.bad{background:#FFF0EE;color:#B93124}
+.share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
+.share-box a{font-weight:700;color:var(--design)}
+.mini-rule{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mini-rule span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700;text-align:center}
+.cover-preview{min-height:170px;border:2px solid var(--ink);border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden;text-align:center;color:var(--ink-soft);padding:12px}
+.cover-preview img{width:100%;height:100%;max-height:220px;object-fit:cover}
+.source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.source-list span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px}
+.prompt-output{font-family:var(--font-mono);font-size:.85rem}
+@media (max-width:760px){.notice-grid,.notice-row,.mini-rule,.source-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <a href="warmups.html">Warm-up arcade</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Module 1 · Week 4</p>
+  <h1>Virtual Noticeboard</h1>
+  <p style="max-width:66ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  Today you turn a messy library noticeboard into a simple public-service page. AI can help read and sort
+  the notices, but humans decide what is useful, what is safe, and what needs librarian verification.</p>
+  <div class="pips"><span class="pip brain"></span><span class="pip design"></span><span class="pip build"></span><span class="pip guard"></span><span class="pip launch"></span></div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">🔎</span><h2 style="margin:0">1 · Warm-up: Notice Detective</h2></header>
+  <p>Pick the better public-service move. At the end, unlock the Notice Detective rules.</p>
+  <div class="game-stage">
+    <div class="progress"><div id="nd-bar"></div></div>
+    <p class="big" id="nd-question">Press start!</p>
+    <div class="choice-row" id="nd-choices">
+      <button class="btn primary" onclick="ndStart()">Start detective training ▶</button>
+    </div>
+    <p class="feedback" id="nd-feedback"></p>
+    <div class="scoreboard"><span>BADGES <span id="nd-score">0</span></span><span>CASE <span id="nd-round">0</span>/4</span></div>
+  </div>
+  <div class="mini-rule">
+    <span>Do not guess facts</span>
+    <span>Sort for real people</span>
+    <span>Verify before sharing</span>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: OCR And Trust</h2></header>
+  <p><strong>Big idea:</strong> AI can read a photo and organize messy information, but it can also misread dates,
+  phone numbers, prices, and locations. For public-service information, unclear details must be checked by a human.</p>
+
+  <label class="field" for="q-ai-misread">What could go wrong if AI misreads a date, time, room, price, or phone number? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-ai-misread" data-save data-label="What could go wrong if AI misreads details"></textarea>
+
+  <label class="field" for="q-public-trust">What should our app say when we are not sure a notice is correct? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-public-trust" data-save data-label="What to say when not sure"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Ask Before You Sort</h2></header>
+  <p><strong>Today's design skill:</strong> information architecture. Kid phrase: messy boards become helpful when we sort them for real people.</p>
+  <p>Ask the librarian only two questions. Use the answers to decide which notices matter most and which languages to prepare for next class.</p>
+
+  <label class="field" for="librarian-questions">What are the 3 most common questions visitors ask here? <span class="savehint">saved ✓</span></label>
+  <textarea id="librarian-questions" data-save data-label="Three common visitor questions"></textarea>
+
+  <label class="field" for="librarian-languages">What are the 3 most useful non-English languages for visitors here? <span class="savehint">saved ✓</span></label>
+  <input type="text" id="librarian-languages" data-save data-label="Useful languages" placeholder="Example: Simplified Chinese, Punjabi, Korean">
+
+  <div class="tool-note">
+    <strong>Use these answers in your noticeboard.</strong>
+    If the librarian says people often ask about printing, events, or library cards, look for notices that help with those needs.
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">📷</span><h2 style="margin:0">4 · Field Mission: Safe Photos</h2></header>
+  <p>Take one cover photo and one noticeboard photo. The useful page matters more than the picture.</p>
+  <div class="source-list">
+    <span><strong>Cover photo:</strong> outside sign, entrance sign, empty shelves, or empty room sign.</span>
+    <span><strong>Noticeboard photo:</strong> whole board or one section. No people needed.</span>
+    <span><strong>Do not include:</strong> faces, children, private papers, computer screens, library cards, or strangers.</span>
+    <span><strong>If unsure:</strong> skip the photo and write "Based on library noticeboard photo. Please verify."</span>
+  </div>
+
+  <label class="field" for="cover-file">Optional cover photo for your virtual noticeboard</label>
+  <input type="file" id="cover-file" accept="image/*">
+  <div id="cover-preview" class="cover-preview">No cover photo yet. Your page can still work without one.</div>
+  <p><span id="cover-status" class="status-pill">cover optional</span></p>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">🪄</span><h2 style="margin:0">5 · AI Lab: Ask ChatGPT To Read The Board</h2></header>
+  <p>Upload your noticeboard photo to ChatGPT. Ask AI to extract only the notices it can clearly read.</p>
+  <p><button class="btn violet" onclick="buildAiPrompt()">Build my ChatGPT prompt</button></p>
+  <textarea id="ai-prompt" rows="15" readonly class="prompt-output"></textarea>
+  <p><button class="btn small" onclick="copyText('ai-prompt','ai-copied')">Copy prompt</button> <span id="ai-copied" class="savehint">copied ✓</span></p>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Sprint: Virtual Noticeboard Builder</h2></header>
+  <p>Paste your best notices from ChatGPT into these cards. Group by interest and age group. Translation comes next class.</p>
+
+  <label class="field" for="board-title">Virtual noticeboard title <span class="savehint">saved ✓</span></label>
+  <input type="text" id="board-title" data-save data-label="Virtual noticeboard title" value="Burnaby Library Virtual Noticeboard">
+
+  <label class="field" for="board-intro">One-sentence intro <span class="savehint">saved ✓</span></label>
+  <textarea id="board-intro" data-save data-label="Noticeboard intro">A cleaner version of public library notices, grouped by interest and age group. Please verify important details with a librarian.</textarea>
+
+  <div class="notice-grid">
+    <article class="notice-card">
+      <h3>Notice 1</h3>
+      <label class="field" for="n1-title">Title <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n1-title" data-save data-label="Notice 1 title">
+      <div class="notice-row">
+        <div><label class="field" for="n1-interest">Interest <span class="savehint">saved ✓</span></label><select id="n1-interest" data-save data-label="Notice 1 interest"></select></div>
+        <div><label class="field" for="n1-age">Age group <span class="savehint">saved ✓</span></label><select id="n1-age" data-save data-label="Notice 1 age group"></select></div>
+      </div>
+      <label class="field" for="n1-when">Date/time <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n1-when" data-save data-label="Notice 1 date and time">
+      <label class="field" for="n1-where">Location <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n1-where" data-save data-label="Notice 1 location">
+      <label class="field" for="n1-summary">Simple summary <span class="savehint">saved ✓</span></label>
+      <textarea id="n1-summary" data-save data-label="Notice 1 summary"></textarea>
+      <label class="field" for="n1-verify">Needs librarian check <span class="savehint">saved ✓</span></label>
+      <textarea id="n1-verify" data-save data-label="Notice 1 verification"></textarea>
+    </article>
+
+    <article class="notice-card">
+      <h3>Notice 2</h3>
+      <label class="field" for="n2-title">Title <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n2-title" data-save data-label="Notice 2 title">
+      <div class="notice-row">
+        <div><label class="field" for="n2-interest">Interest <span class="savehint">saved ✓</span></label><select id="n2-interest" data-save data-label="Notice 2 interest"></select></div>
+        <div><label class="field" for="n2-age">Age group <span class="savehint">saved ✓</span></label><select id="n2-age" data-save data-label="Notice 2 age group"></select></div>
+      </div>
+      <label class="field" for="n2-when">Date/time <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n2-when" data-save data-label="Notice 2 date and time">
+      <label class="field" for="n2-where">Location <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n2-where" data-save data-label="Notice 2 location">
+      <label class="field" for="n2-summary">Simple summary <span class="savehint">saved ✓</span></label>
+      <textarea id="n2-summary" data-save data-label="Notice 2 summary"></textarea>
+      <label class="field" for="n2-verify">Needs librarian check <span class="savehint">saved ✓</span></label>
+      <textarea id="n2-verify" data-save data-label="Notice 2 verification"></textarea>
+    </article>
+
+    <article class="notice-card">
+      <h3>Notice 3</h3>
+      <label class="field" for="n3-title">Title <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n3-title" data-save data-label="Notice 3 title">
+      <div class="notice-row">
+        <div><label class="field" for="n3-interest">Interest <span class="savehint">saved ✓</span></label><select id="n3-interest" data-save data-label="Notice 3 interest"></select></div>
+        <div><label class="field" for="n3-age">Age group <span class="savehint">saved ✓</span></label><select id="n3-age" data-save data-label="Notice 3 age group"></select></div>
+      </div>
+      <label class="field" for="n3-when">Date/time <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n3-when" data-save data-label="Notice 3 date and time">
+      <label class="field" for="n3-where">Location <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n3-where" data-save data-label="Notice 3 location">
+      <label class="field" for="n3-summary">Simple summary <span class="savehint">saved ✓</span></label>
+      <textarea id="n3-summary" data-save data-label="Notice 3 summary"></textarea>
+      <label class="field" for="n3-verify">Needs librarian check <span class="savehint">saved ✓</span></label>
+      <textarea id="n3-verify" data-save data-label="Notice 3 verification"></textarea>
+    </article>
+
+    <article class="notice-card">
+      <h3>Notice 4</h3>
+      <label class="field" for="n4-title">Title <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n4-title" data-save data-label="Notice 4 title">
+      <div class="notice-row">
+        <div><label class="field" for="n4-interest">Interest <span class="savehint">saved ✓</span></label><select id="n4-interest" data-save data-label="Notice 4 interest"></select></div>
+        <div><label class="field" for="n4-age">Age group <span class="savehint">saved ✓</span></label><select id="n4-age" data-save data-label="Notice 4 age group"></select></div>
+      </div>
+      <label class="field" for="n4-when">Date/time <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n4-when" data-save data-label="Notice 4 date and time">
+      <label class="field" for="n4-where">Location <span class="savehint">saved ✓</span></label>
+      <input type="text" id="n4-where" data-save data-label="Notice 4 location">
+      <label class="field" for="n4-summary">Simple summary <span class="savehint">saved ✓</span></label>
+      <textarea id="n4-summary" data-save data-label="Notice 4 summary"></textarea>
+      <label class="field" for="n4-verify">Needs librarian check <span class="savehint">saved ✓</span></label>
+      <textarea id="n4-verify" data-save data-label="Notice 4 verification"></textarea>
+    </article>
+  </div>
+
+  <p style="margin-top:16px"><button class="btn violet" onclick="buildNoticeboard()">Build my virtual noticeboard HTML</button></p>
+  <textarea id="noticeboard-html" rows="12" class="prompt-output" readonly></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">7 · Trust Check Before Upload</h2></header>
+  <p>Check safety and accuracy before making an external link.</p>
+
+  <label class="field" for="q-photo-safe">Is every photo safe? No faces, children, private screens, cards, or documents. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-photo-safe" data-save data-label="Photo safety check"></textarea>
+
+  <label class="field" for="q-facts-checked">What facts did a librarian or teacher check? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-facts-checked" data-save data-label="Facts checked"></textarea>
+
+  <label class="field" for="q-still-verify">What still needs librarian verification? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-still-verify" data-save data-label="Still needs verification"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">8 · Upload And Share</h2></header>
+  <div class="tool-note">
+    <strong>External URL:</strong> Upload your generated noticeboard HTML to get a private-ish share link. It is not listed in a gallery, but anyone with the link can open it.
+  </div>
+  <p>
+    <button class="btn mint" onclick="uploadNoticeboard()">Upload virtual noticeboard</button>
+    <span id="upload-status" class="status-pill">not uploaded yet</span>
+  </p>
+  <div id="share-result" class="share-box" hidden></div>
+</section>
+
+<div class="notebook">
+  <h3>📓 My notebook</h3>
+  <p>Everything you typed today is saved on this computer. Download a copy to show your family or keep forever.</p>
+  <button class="btn sun" onclick="downloadNotebook('Week 4')">Download my answers</button>
+</div>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Week 4</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+const INTERESTS = [
+  'Kids & Families',
+  'Teens',
+  'Seniors',
+  'Newcomers / Language Help',
+  'Jobs & Volunteering',
+  'Arts & Culture',
+  'Health & Wellness',
+  'Community Help',
+  'Learning / Workshops'
+];
+const AGES = ['Kids', 'Teens', 'Adults', 'Seniors', 'All Ages'];
+let coverDataUrl = '';
+
+const ND = [
+  {
+    prompt: 'AI reads a blurry notice and guesses the event is on July 8.',
+    a: 'Publish July 8 because AI sounded confident.',
+    b: 'Write "date needs librarian verification" until a human checks.',
+    win: 'b',
+    why: 'Public info should not guess important details.'
+  },
+  {
+    prompt: 'A noticeboard photo has strangers in the background.',
+    a: 'Use it anyway because it is a public place.',
+    b: 'Retake, crop, or skip the photo.',
+    win: 'b',
+    why: 'Public place does not mean okay to publish people online.'
+  },
+  {
+    prompt: 'You have six notices: storytime, tax help, art show, volunteering, chess club, and blood pressure clinic.',
+    a: 'Put them all in one long paragraph.',
+    b: 'Group them by interest and age group.',
+    win: 'b',
+    why: 'Sorting helps visitors find what matters to them.'
+  },
+  {
+    prompt: 'The librarian says the most common visitor questions are printing, library cards, and events.',
+    a: 'Design around those real needs.',
+    b: 'Ignore that and use only your favorite poster.',
+    win: 'a',
+    why: 'Good public-service builders listen before they build.'
+  }
+];
+let ndI = 0, ndS = 0;
+function ndStart(){ ndI = 0; ndS = 0; ndNext(); }
+function ndNext(){
+  const q = ND[ndI];
+  document.getElementById('nd-question').textContent = q.prompt;
+  document.getElementById('nd-feedback').textContent = '';
+  document.getElementById('nd-round').textContent = ndI + 1;
+  document.getElementById('nd-bar').style.width = (ndI / ND.length * 100) + '%';
+  document.getElementById('nd-choices').innerHTML =
+    `<button class="btn" onclick="ndAnswer('a')">A: ${q.a}</button>
+     <button class="btn" onclick="ndAnswer('b')">B: ${q.b}</button>`;
+}
+function ndAnswer(choice){
+  const q = ND[ndI], fb = document.getElementById('nd-feedback');
+  const right = choice === q.win;
+  if (right) ndS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = (right ? '✓ Useful move! ' : '✗ Try the safer public-service move. ') + q.why;
+  document.getElementById('nd-score').textContent = ndS;
+  ndI++;
+  document.getElementById('nd-choices').innerHTML = ndI < ND.length
+    ? '<button class="btn primary" onclick="ndNext()">Next case ▶</button>'
+    : '<button class="btn mint" onclick="ndEnd()">Unlock rules 🏁</button>';
+}
+function ndEnd(){
+  document.getElementById('nd-bar').style.width = '100%';
+  document.getElementById('nd-question').textContent =
+    `You solved ${ndS}/4 cases. Now build like a public-service designer: sort, simplify, and verify.`;
+  document.getElementById('nd-choices').innerHTML = '<button class="btn" onclick="ndStart()">Play again ↺</button>';
+  document.getElementById('nd-feedback').textContent = '';
+}
+
+function value(id, fallback){
+  const el = document.getElementById(id);
+  return (el && el.value.trim()) || fallback;
+}
+function escapeHtml(text){
+  return String(text || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function populateSelects(){
+  document.querySelectorAll('select[id$="-interest"]').forEach(sel => {
+    if (sel.options.length) return;
+    INTERESTS.forEach(item => sel.add(new Option(item, item)));
+  });
+  document.querySelectorAll('select[id$="-age"]').forEach(sel => {
+    if (sel.options.length) return;
+    AGES.forEach(item => sel.add(new Option(item, item)));
+  });
+}
+populateSelects();
+
+function buildAiPrompt(){
+  const questions = value('librarian-questions', '[paste the librarian common questions here]');
+  const languages = value('librarian-languages', '[paste the librarian language answers here]');
+  document.getElementById('ai-prompt').value =
+`Look at this public library noticeboard photo.
+
+We asked the librarian:
+- 3 most common visitor questions: ${questions}
+- 3 useful non-English languages: ${languages}
+
+Create a Virtual Noticeboard from the notices you can clearly read.
+
+For each notice you can read, return:
+1. Title
+2. Date/time
+3. Location
+4. Simple summary
+5. Interest category
+6. Age group
+7. Who this helps
+8. What needs librarian verification
+
+Group the notices by interest and age group.
+Do not guess unclear dates, phone numbers, prices, or locations.
+If a notice is unclear, skip it or write "Needs librarian verification."
+Do not translate yet. Translation will be a future class.`;
+}
+
+function copyText(id, copiedId){
+  navigator.clipboard.writeText(document.getElementById(id).value || '');
+  const c = document.getElementById(copiedId);
+  c.classList.add('show'); setTimeout(() => c.classList.remove('show'), 1200);
+}
+
+function noticeData(){
+  const notices = [];
+  for (let i = 1; i <= 4; i++) {
+    const title = value(`n${i}-title`, '');
+    if (!title) continue;
+    notices.push({
+      title,
+      interest: value(`n${i}-interest`, 'Community Help'),
+      age: value(`n${i}-age`, 'All Ages'),
+      when: value(`n${i}-when`, 'Please verify with librarian'),
+      where: value(`n${i}-where`, 'Please verify with librarian'),
+      summary: value(`n${i}-summary`, 'Please verify this notice with a librarian.'),
+      verify: value(`n${i}-verify`, 'Please verify important details with a librarian.')
+    });
+  }
+  return notices;
+}
+
+function buildNoticeboard(){
+  const notices = noticeData();
+  const title = value('board-title', 'Burnaby Library Virtual Noticeboard');
+  const intro = value('board-intro', 'A cleaner version of public library notices, grouped by interest and age group.');
+  const languages = value('librarian-languages', 'Translation coming next class');
+  const questionNotes = value('librarian-questions', 'Ask librarian for common visitor questions.');
+  const cover = coverDataUrl ? `<img class="cover" src="${coverDataUrl}" alt="">` : '<div class="cover empty">Cover photo optional</div>';
+  const interests = [...new Set(notices.map(n => n.interest))];
+  const ages = [...new Set(notices.map(n => n.age))];
+  const cardHtml = notices.length ? notices.map(n => `
+    <article class="notice" data-interest="${escapeHtml(n.interest)}" data-age="${escapeHtml(n.age)}">
+      <div class="chips"><span>${escapeHtml(n.interest)}</span><span>${escapeHtml(n.age)}</span></div>
+      <h2>${escapeHtml(n.title)}</h2>
+      <p>${escapeHtml(n.summary)}</p>
+      <dl>
+        <dt>Date/time</dt><dd>${escapeHtml(n.when)}</dd>
+        <dt>Location</dt><dd>${escapeHtml(n.where)}</dd>
+        <dt>Verify</dt><dd>${escapeHtml(n.verify)}</dd>
+      </dl>
+    </article>`).join('\n') : '<p class="empty">No notices added yet.</p>';
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(title)}</title>
+<meta name="robots" content="noindex">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f3f7fb;color:#17223b}
+header{padding:28px 20px;background:#143d59;color:white}
+main{max-width:1080px;margin:0 auto;padding:20px}
+h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3.5rem)}
+.cover{width:100%;max-height:280px;object-fit:cover;border:3px solid #17223b;border-radius:10px;margin:18px 0}
+.cover.empty{display:grid;place-items:center;height:120px;background:#fff;color:#667;border:3px dashed #17223b}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+button{border:2px solid #17223b;border-radius:8px;background:white;padding:9px 12px;font-weight:700;cursor:pointer}
+button.active{background:#ffd166}
+.meta{background:#fff;border:2px solid #17223b;border-radius:10px;padding:14px;margin:16px 0}
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.notice{background:white;border:2px solid #17223b;border-radius:10px;padding:16px;box-shadow:3px 3px 0 #17223b}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chips span{font-size:.78rem;font-weight:700;border:2px solid #17223b;border-radius:999px;padding:4px 8px;background:#e8f7f3}
+dl{display:grid;grid-template-columns:82px 1fr;gap:8px;margin:12px 0 0}dt{font-weight:700}dd{margin:0}
+.empty{background:white;border:2px solid #17223b;border-radius:10px;padding:20px}
+footer{padding:20px;color:#667;text-align:center}
+</style>
+</head>
+<body>
+<header><h1>${escapeHtml(title)}</h1><p>${escapeHtml(intro)}</p></header>
+<main>
+${cover}
+<section class="meta"><strong>Librarian interview:</strong> ${escapeHtml(questionNotes)}<br><strong>Languages for next class:</strong> ${escapeHtml(languages)}<br><strong>Source:</strong> library noticeboard photo and student/librarian verification.</section>
+<div class="filters">
+  <button class="active" data-filter="all">All notices</button>
+  ${interests.map(item => `<button data-interest="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join('')}
+  ${ages.map(item => `<button data-age="${escapeHtml(item)}">${escapeHtml(item)}</button>`).join('')}
+</div>
+<section class="board">${cardHtml}</section>
+</main>
+<footer>Built by KIDSGPT. Important details should be verified with library staff.</footer>
+<script>
+document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const interest = btn.dataset.interest;
+  const age = btn.dataset.age;
+  document.querySelectorAll('.notice').forEach(card => {
+    card.style.display = (!interest && !age) || card.dataset.interest === interest || card.dataset.age === age ? '' : 'none';
+  });
+}));
+<\/script>
+</body>
+</html>`;
+  document.getElementById('noticeboard-html').value = html;
+  return html;
+}
+
+async function compressImage(file){
+  if (!file) return '';
+  const status = document.getElementById('cover-status');
+  if (!file.type.startsWith('image/')) {
+    status.textContent = 'use an image file';
+    status.className = 'status-pill bad';
+    return '';
+  }
+  const bitmap = await createImageBitmap(file);
+  const max = 900;
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  let quality = 0.72;
+  let data = canvas.toDataURL('image/jpeg', quality);
+  while (data.length > 340000 && quality > 0.34) {
+    quality -= 0.08;
+    data = canvas.toDataURL('image/jpeg', quality);
+  }
+  if (data.length > 340000) {
+    status.textContent = 'image too large; page will work without it';
+    status.className = 'status-pill bad';
+    return '';
+  }
+  status.textContent = 'cover ready';
+  status.className = 'status-pill good';
+  return data;
+}
+
+document.getElementById('cover-file').addEventListener('change', async event => {
+  const file = event.target.files[0];
+  coverDataUrl = await compressImage(file);
+  const preview = document.getElementById('cover-preview');
+  preview.innerHTML = coverDataUrl ? `<img src="${coverDataUrl}" alt="">` : 'No cover photo yet. Your page can still work without one.';
+});
+
+async function uploadNoticeboard(){
+  const status = document.getElementById('upload-status');
+  const resultBox = document.getElementById('share-result');
+  status.textContent = 'uploading...';
+  status.className = 'status-pill';
+  resultBox.hidden = true;
+  try {
+    const html = document.getElementById('noticeboard-html').value.trim() || buildNoticeboard();
+    if (!html) throw new Error('Build your noticeboard first.');
+    const response = await fetch('/api/upload-story', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student: (currentStudent() || {}).name || 'unknown',
+        title: value('board-title', 'Virtual noticeboard'),
+        html
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not upload.');
+    status.textContent = 'uploaded';
+    status.className = 'status-pill good';
+    resultBox.innerHTML = `<strong>External URL:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a><p style="margin-bottom:0">Only share after a teacher or librarian checks the facts and photo safety.</p>`;
+    resultBox.hidden = false;
+  } catch (error) {
+    status.textContent = error.message || 'upload unavailable';
+    status.className = 'status-pill bad';
+  }
+}
+</script>
+</body>
+</html>
