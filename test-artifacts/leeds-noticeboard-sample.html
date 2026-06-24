@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leeds Central Library Virtual Noticeboard</title>
+<meta name="robots" content="noindex">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f5f8fb;color:#17223b}
+header{background:#174d7c;color:#fff;padding:28px 20px}
+main{max-width:1100px;margin:0 auto;padding:20px}
+h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3.4rem)}
+.meta,.verify{background:#fff;border:2px solid #17223b;border-radius:10px;padding:14px;margin:16px 0}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+button{border:2px solid #17223b;border-radius:8px;background:#fff;padding:9px 12px;font-weight:700;cursor:pointer}
+button.active{background:#ffd166}
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:16px}
+.notice{background:#fff;border:2px solid #17223b;border-radius:10px;padding:16px;box-shadow:3px 3px 0 #17223b}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chips span{font-size:.78rem;font-weight:700;border:2px solid #17223b;border-radius:999px;padding:4px 8px;background:#e8f7f3}
+.chips .check{background:#fff0bd}
+h2{margin:8px 0;font-size:1.25rem}
+dl{display:grid;grid-template-columns:82px 1fr;gap:8px;margin:12px 0 0}
+dt{font-weight:700}dd{margin:0}
+footer{padding:20px;text-align:center;color:#667}
+</style>
+</head>
+<body>
+<header>
+  <h1>Leeds Central Library Virtual Noticeboard</h1>
+  <p>A cleaner scan of a busy "What's On In Central Library" board. Important details should be checked with library staff.</p>
+</header>
+<main>
+  <section class="meta">
+    <strong>What visitors need:</strong> events, children/youth activities, reading groups, and help finding library services.<br>
+    <strong>Languages for next class:</strong> Arabic, Polish, Urdu.<br>
+    <strong>Source:</strong> Wikimedia Commons photo, "Leeds Central Library, Notice board.jpg". Important details should be checked with library staff.
+  </section>
+
+  <div class="filters" aria-label="Filter notices">
+    <button class="active" data-filter="all">All</button>
+    <button data-interest="Kids & Families">Kids & Families</button>
+    <button data-interest="Reading & Writing">Reading & Writing</button>
+    <button data-interest="Digital & Creative">Digital & Creative</button>
+    <button data-interest="Local History">Local History</button>
+    <button data-age="Adults">Adults</button>
+    <button data-age="All Ages">All Ages</button>
+  </div>
+
+  <section class="board">
+    <article class="notice" data-interest="Kids & Families" data-age="Kids">
+      <div class="chips"><span>Kids & Families</span><span>Kids</span><span class="check">clear from photo</span></div>
+      <h2>Storytime</h2>
+      <p>A children's story session listed on the Central Library board.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Central Library</dd><dt>Verify</dt><dd>Exact day, time, and room.</dd></dl>
+    </article>
+
+    <article class="notice" data-interest="Digital & Creative" data-age="All Ages">
+      <div class="chips"><span>Digital & Creative</span><span>All Ages</span><span class="check">needs librarian check</span></div>
+      <h2>Minecraft Cafe</h2>
+      <p>A creative technology activity connected to Minecraft.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Central Library</dd><dt>Verify</dt><dd>Age range, date, and sign-up details.</dd></dl>
+    </article>
+
+    <article class="notice" data-interest="Reading & Writing" data-age="Adults">
+      <div class="chips"><span>Reading & Writing</span><span>Adults</span><span class="check">clear from photo</span></div>
+      <h2>Crime Book Club</h2>
+      <p>A book group for readers interested in crime fiction.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Central Library</dd><dt>Verify</dt><dd>Meeting date, book title, and room.</dd></dl>
+    </article>
+
+    <article class="notice" data-interest="Reading & Writing" data-age="Adults">
+      <div class="chips"><span>Reading & Writing</span><span>Adults</span><span class="check">clear from photo</span></div>
+      <h2>Writers In The Rotunda</h2>
+      <p>A writing-related event or group listed on the board.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Rotunda / Central Library</dd><dt>Verify</dt><dd>Exact schedule and audience.</dd></dl>
+    </article>
+
+    <article class="notice" data-interest="Local History" data-age="Adults">
+      <div class="chips"><span>Local History</span><span>Adults</span><span class="check">clear from photo</span></div>
+      <h2>Local & Family History</h2>
+      <p>A library activity for people interested in family or local history research.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Central Library</dd><dt>Verify</dt><dd>Session time and whether booking is required.</dd></dl>
+    </article>
+
+    <article class="notice" data-interest="Reading & Writing" data-age="All Ages">
+      <div class="chips"><span>Reading & Writing</span><span>All Ages</span><span class="check">needs librarian check</span></div>
+      <h2>Share A Story</h2>
+      <p>A story-sharing or reading event visible on the board.</p>
+      <dl><dt>When</dt><dd>Needs librarian check</dd><dt>Where</dt><dd>Central Library</dd><dt>Verify</dt><dd>Audience, time, and activity description.</dd></dl>
+    </article>
+  </section>
+
+  <section class="verify">
+    <h2>What to verify next</h2>
+    <p>Several posters were visible but too small to safely copy exact dates, times, or rooms. Ask library staff to confirm details before sharing this page with visitors.</p>
+  </section>
+</main>
+<footer>Built by KIDSGPT as a public-service prototype.</footer>
+<script>
+document.querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll('button').forEach(item => item.classList.remove('active'));
+  button.classList.add('active');
+  const interest = button.dataset.interest;
+  const age = button.dataset.age;
+  document.querySelectorAll('.notice').forEach(card => {
+    card.style.display = button.dataset.filter === 'all' || card.dataset.interest === interest || card.dataset.age === age ? '' : 'none';
+  });
+}));
+</script>
+</body>
+</html>
