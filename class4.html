@@ -85,15 +85,15 @@
   <p><strong>Today's design skill:</strong> information architecture. Kid phrase: messy boards become helpful when we sort them for real people.</p>
   <p>Ask the librarian only two questions. Use the answers to decide which notices matter most and which languages to prepare for next class.</p>
 
-  <label class="field" for="librarian-questions">What are the 3 most common questions visitors ask here? <span class="savehint">saved ✓</span></label>
-  <textarea id="librarian-questions" data-save data-label="Three common visitor questions"></textarea>
+  <label class="field" for="librarian-questions">What are the 2 most common questions visitors ask here? <span class="savehint">saved ✓</span></label>
+  <textarea id="librarian-questions" data-save data-label="Two common visitor questions"></textarea>
 
-  <label class="field" for="librarian-languages">What are the 3 most useful non-English languages for visitors here? <span class="savehint">saved ✓</span></label>
-  <input type="text" id="librarian-languages" data-save data-label="Useful languages" placeholder="Example: Simplified Chinese, Punjabi, Korean">
+  <label class="field" for="librarian-languages">What are the 2 most useful non-English languages for visitors here? <span class="savehint">saved ✓</span></label>
+  <input type="text" id="librarian-languages" data-save data-label="Useful languages" placeholder="Example: Simplified Chinese, Punjabi">
 
   <div class="tool-note">
     <strong>Use these answers in your noticeboard.</strong>
-    If the librarian says people often ask about printing, events, or library cards, look for notices that help with those needs.
+    If the librarian says people often ask about printing or events, look for notices that help with those needs.
   </div>
 </section>
 
@@ -259,13 +259,15 @@ function buildAiPrompt(){
   const questions = value('librarian-questions', '[paste the librarian common questions here]');
   const languages = value('librarian-languages', '[paste the librarian language answers here]');
   document.getElementById('ai-prompt').value =
-`Look at this public library noticeboard photo and help us build a useful public-service webpage.
+`Look at this public library noticeboard photo and help us build the first feature of a Library Helper app.
 
 We asked the librarian:
-- 3 most common visitor questions: ${questions}
-- 3 useful non-English languages: ${languages}
+- 2 most common visitor questions: ${questions}
+- 2 useful non-English languages: ${languages}
 
-Create one complete HTML file for a Virtual Noticeboard.
+Create one complete HTML file for a Digital Noticeboard.
+This should feel like the first useful feature in a bigger Library Helper app.
+Visitors should be able to narrow the notices using faceted filters: age group and interest.
 
 Rules:
 - Extract only notices you can clearly read from the photo.
@@ -275,7 +277,9 @@ Rules:
 - Do not guess dates, phone numbers, prices, room names, websites, or locations.
 - Do not include private personal information. If a poster has a personal email or phone number, summarize the notice and write "contact details need librarian verification."
 - Group notices by interest and by age group.
+- Add interactive faceted filters so visitors can select an age group, an interest, or both.
 - Use age groups like Kids, Teens, Adults, Seniors, and All Ages.
+- Use interest categories like Events, Learning, Books & Stories, Technology, Community Help, Arts, Health, or other categories that fit the notices.
 - Include the librarian answers above as a small "What visitors need" section.
 - Do not translate yet. Add a small "Languages for next class" note using the languages above.
 - Make it easy to scan: cards, filters or sections, clear labels, and a "clear from photo" or "needs librarian check" label on every card.
