@@ -28,7 +28,13 @@
 .chat-msg.bot{align-self:flex-start;background:#F6FFF2}
 .share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
 .share-box a{font-weight:700;color:var(--design)}
-@media (max-width:760px){.mini-rule,.config-grid{grid-template-columns:1fr}.preview-frame{height:390px}}
+.backend-diagram{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px;margin:16px 0}
+.diagram-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;text-align:center;box-shadow:3px 3px 0 var(--ink);min-height:120px;display:grid;align-content:center;gap:6px}
+.diagram-card .icon{font-size:2.2rem;line-height:1}
+.diagram-card strong{font-family:var(--font-display);font-size:1.1rem}
+.diagram-card span{color:var(--ink-soft)}
+.diagram-arrow{font-family:var(--font-display);font-size:1.8rem;color:var(--design)}
+@media (max-width:760px){.mini-rule,.config-grid{grid-template-columns:1fr}.preview-frame{height:390px}.backend-diagram{grid-template-columns:1fr}.diagram-arrow{transform:rotate(90deg);justify-self:center}}
 </style>
 </head>
 <body>
@@ -139,12 +145,31 @@ Do not answer non-library questions.</textarea>
 
 <section class="lesson-section">
   <header><span class="chip build">🔐</span><h2 style="margin:0">4 · Backend Corner: The Secret Helper</h2></header>
-  <p>The page people touch is the <strong>frontend</strong>. The helper behind the counter is the <strong>backend</strong>. The backend keeps the secret and asks AI using safe rules.</p>
-  <div class="tool-note" style="font-family:var(--font-mono)">
-    Browser → KIDSGPT backend → AI → KIDSGPT backend → Browser
+  <p>The part people touch is the <strong>front desk</strong>. The helper behind the counter is the <strong>backend</strong>. The backend keeps the secret and asks AI using safe rules.</p>
+  <div class="backend-diagram" aria-label="Computer asks backend helper, backend asks AI, answer returns to computer">
+    <div class="diagram-card">
+      <div class="icon">💻</div>
+      <strong>Your page</strong>
+      <span>visitor asks a question</span>
+    </div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-card">
+      <div class="icon">🧑‍💼</div>
+      <strong>Secret helper</strong>
+      <span>keeps the secret and adds rules</span>
+    </div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-card">
+      <div class="icon">✨</div>
+      <strong>AI</strong>
+      <span>answers using safe facts</span>
+    </div>
+  </div>
+  <div class="tool-note">
+    The answer comes back the same path: AI → secret helper → your page.
   </div>
 
-  <label class="field" for="q-secret">Why should the secret stay in the backend instead of inside your HTML? <span class="savehint">saved ✓</span></label>
+  <label class="field" for="q-secret">Why should the secret stay with the backend helper instead of on the page people can open? <span class="savehint">saved ✓</span></label>
   <textarea id="q-secret" data-save data-label="Why secrets stay backend"></textarea>
 
   <label class="field" for="q-backend-rules">What rules should the backend add before AI answers people? <span class="savehint">saved ✓</span></label>
