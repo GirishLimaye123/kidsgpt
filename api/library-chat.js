@@ -66,6 +66,45 @@ function compactConfig(botConfig = {}) {
   return text.length > MAX_CONFIG_CHARS ? text.slice(0, MAX_CONFIG_CHARS) : text;
 }
 
+function getFriendlyLocalAnswer(question, language, botConfig = {}) {
+  const lower = question.toLowerCase();
+  const isGreeting = /^(hi|hello|hey|yo|good morning|good afternoon|good evening)\b/.test(lower);
+  const nameMatch = question.match(/\b(my name is|i am|i'm)\s+([a-z][a-z -]{0,40})/i);
+  if (!isGreeting && !nameMatch) return '';
+
+  const botName = cleanText(botConfig.botName, 80) || 'Library Helper';
+  const visitor = nameMatch ? cleanText(nameMatch[2], 40).replace(/\b\w/g, ch => ch.toUpperCase()) : '';
+
+  if (/punjabi/i.test(language)) {
+    return visitor
+      ? `ਸਤ ਸ੍ਰੀ ਅਕਾਲ ${visitor}! ਮੈਂ ${botName} ਹਾਂ। ਤੁਸੀਂ ਮੈਨੂੰ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਮੇਂ, ਥਾਂ, ਅਤੇ ਸੇਵਾਵਾਂ ਬਾਰੇ ਪੁੱਛ ਸਕਦੇ ਹੋ।`
+      : `ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ${botName} ਹਾਂ। ਤੁਸੀਂ ਮੈਨੂੰ ਲਾਇਬ੍ਰੇਰੀ ਬਾਰੇ ਪੁੱਛ ਸਕਦੇ ਹੋ।`;
+  }
+  if (/chinese/i.test(language)) {
+    return visitor
+      ? `你好，${visitor}！我是 ${botName}。你可以问我图书馆开放时间、地点和服务。`
+      : `你好！我是 ${botName}。你可以问我关于图书馆的问题。`;
+  }
+  if (/korean/i.test(language)) {
+    return visitor
+      ? `안녕하세요, ${visitor}! 저는 ${botName}입니다. 도서관 시간, 위치, 서비스에 대해 물어보세요.`
+      : `안녕하세요! 저는 ${botName}입니다. 도서관에 대해 물어보세요.`;
+  }
+  if (/spanish/i.test(language)) {
+    return visitor
+      ? `Hola, ${visitor}. Soy ${botName}. Puedes preguntarme sobre horarios, ubicación y servicios de la biblioteca.`
+      : `Hola. Soy ${botName}. Puedes preguntarme sobre la biblioteca.`;
+  }
+  if (/french/i.test(language)) {
+    return visitor
+      ? `Bonjour, ${visitor}. Je suis ${botName}. Tu peux me poser des questions sur les heures, l'adresse et les services de la bibliothèque.`
+      : `Bonjour. Je suis ${botName}. Tu peux me poser des questions sur la bibliothèque.`;
+  }
+  return visitor
+    ? `Hi ${visitor}. I'm ${botName}. Ask me about library hours, location, services, or where to check details.`
+    : `Hi. I'm ${botName}. Ask me about library hours, location, services, or where to check details.`;
+}
+
 async function fetchLibraryFacts() {
   const response = await fetch(BPL_LOCATION_URL, {
     headers: {
@@ -103,6 +142,8 @@ async function callOpenAI({ question, language, botConfigText, libraryFacts }) {
     'You are a safe classroom library-helper chatbot.',
     'Use only the approved library facts provided by the backend.',
     'Follow the student bot style unless it conflicts with safety.',
+    'You may answer brief social messages such as greetings, thanks, and the visitor sharing their name without using library facts.',
+    'For social messages, respond warmly, then invite the visitor to ask about the library.',
     'Do not pretend to be a real librarian, library employee, real person, celebrity, or fictional character.',
     'Do not invent library policies, prices, dates, rooms, phone numbers, URLs, or event details.',
     'If the facts do not answer the question, say to ask library staff or check the official Burnaby Public Library website.',
@@ -173,6 +214,17 @@ module.exports = async function handler(req, res) {
     if (!question) return json(res, 400, { error: 'Ask a question first.' });
     if (question.length > MAX_QUESTION_CHARS) {
       return json(res, 413, { error: `Question is too long. Keep it under ${MAX_QUESTION_CHARS} characters.` });
+    }
+
+    const localAnswer = getFriendlyLocalAnswer(question, language, body.botConfig || {});
+    if (localAnswer) {
+      return json(res, 200, {
+        ok: true,
+        answer: localAnswer,
+        language,
+        model: 'local-greeting',
+        source: BPL_LOCATION_URL
+      });
     }
 
     const botConfigText = compactConfig(body.botConfig || {});
