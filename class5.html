@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 5: AI Library Helper — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.tool-note{border:2px dashed var(--ink);border-radius:12px;background:#fff;padding:14px;margin:12px 0}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.78rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:4px 10px;box-shadow:2px 2px 0 var(--ink)}
+.status-pill.good{background:#E8FAF5;color:#0B755F}
+.status-pill.bad{background:#FFF0EE;color:#B93124}
+.mini-rule{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mini-rule span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700;text-align:center}
+.choice-row.stack{display:grid;grid-template-columns:1fr;gap:10px}
+.config-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prompt-output{font-family:var(--font-mono);font-size:.85rem}
+.preview-frame{width:100%;height:520px;border:2px solid var(--ink);border-radius:12px;background:#fff;box-shadow:var(--shadow-sm)}
+.chat-box{display:flex;flex-direction:column;gap:10px;min-height:210px;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:12px}
+.chat-msg{padding:10px 12px;border:2px solid var(--ink);border-radius:10px;max-width:86%;white-space:pre-wrap}
+.chat-msg.user{align-self:flex-end;background:#DFF3FF}
+.chat-msg.bot{align-self:flex-start;background:#F6FFF2}
+.share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
+.share-box a{font-weight:700;color:var(--design)}
+@media (max-width:760px){.mini-rule,.config-grid{grid-template-columns:1fr}.preview-frame{height:390px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <a href="warmups.html">Warm-up arcade</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Module 1 · Week 5</p>
+  <h1>Build Your First AI Library Helper</h1>
+  <p style="max-width:68ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  Last class you made library information easier to browse. Today you make it easier to ask about.
+  You will design an AI helper with manners, a language selector, and a secret helper behind the counter.</p>
+  <div class="pips"><span class="pip brain"></span><span class="pip design"></span><span class="pip build"></span><span class="pip guard"></span><span class="pip launch"></span></div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">🤖</span><h2 style="margin:0">1 · Warm-up: Bot Or Not?</h2></header>
+  <p>Pick the better chatbot behavior. At the end, unlock today's bot rules.</p>
+  <div class="game-stage">
+    <div class="progress"><div id="bo-bar"></div></div>
+    <p class="big" id="bo-question">Press start!</p>
+    <div class="choice-row stack" id="bo-choices">
+      <button class="btn primary" onclick="boStart()">Start bot training ▶</button>
+    </div>
+    <p class="feedback" id="bo-feedback"></p>
+    <div class="scoreboard"><span>GOOD MOVES <span id="bo-score">0</span></span><span>CASE <span id="bo-round">0</span>/4</span></div>
+  </div>
+  <div class="mini-rule">
+    <span>Personality, not pretending</span>
+    <span>Use approved facts</span>
+    <span>Admit uncertainty</span>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: Bots Talk To People</h2></header>
+  <p><strong>Big idea:</strong> a chatbot is not just code. It is an experience. Builders decide how it should behave with real people.</p>
+
+  <label class="field" for="q-helpful">What makes a chatbot helpful when someone is confused? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-helpful" data-save data-label="What makes a chatbot helpful"></textarea>
+
+  <label class="field" for="q-unknown">What should a chatbot do when it does not know the answer? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-unknown" data-save data-label="What should a chatbot do when unsure"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Manners For Machines</h2></header>
+  <p><strong>Today's design skill:</strong> bot etiquette. Kid phrase: decide your bot's manners before you let it talk to people.</p>
+
+  <label class="field" for="bot-name">Bot name <span class="savehint">saved ✓</span></label>
+  <input id="bot-name" data-save data-label="Bot name" value="Nova Library Helper">
+
+  <label class="field" for="bot-greeting">Greeting <span class="savehint">saved ✓</span></label>
+  <input id="bot-greeting" data-save data-label="Bot greeting" value="Hi! Ask me about the library.">
+
+  <div class="config-grid">
+    <div>
+      <label class="field" for="bot-language">Default language <span class="savehint">saved ✓</span></label>
+      <select id="bot-language" data-save data-label="Default language">
+        <option>English</option>
+        <option>Punjabi</option>
+        <option>Simplified Chinese</option>
+        <option>Korean</option>
+        <option>Spanish</option>
+        <option>French</option>
+      </select>
+    </div>
+    <div>
+      <label class="field" for="bot-color">Color style <span class="savehint">saved ✓</span></label>
+      <select id="bot-color" data-save data-label="Bot color style">
+        <option value="blue">Blue + mint</option>
+        <option value="sun">Sunshine</option>
+        <option value="berry">Berry</option>
+        <option value="forest">Forest</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="field" for="bot-personality">Personality <span class="savehint">saved ✓</span></label>
+  <input id="bot-personality" data-save data-label="Bot personality" value="friendly, short answers, curious, a little playful">
+
+  <label class="field" for="bot-etiquette">Etiquette rules <span class="savehint">saved ✓</span></label>
+  <textarea id="bot-etiquette" data-save data-label="Bot etiquette rules">Do not pretend to be a real librarian.
+Say when you are unsure.
+Be kind and clear.
+Do not answer non-library questions.</textarea>
+
+  <label class="field" for="bot-special">Special touch <span class="savehint">saved ✓</span></label>
+  <input id="bot-special" data-save data-label="Bot special touch" value="Start with a warm phrase like 'Good question.'">
+
+  <div class="tool-note">
+    <strong>Rule:</strong> give your bot a personality, not a fake identity. It can be playful, calm, cheerful, or formal. It should not pretend to be a real librarian, celebrity, or character.
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip build">🔐</span><h2 style="margin:0">4 · Backend Corner: The Secret Helper</h2></header>
+  <p>The page people touch is the <strong>frontend</strong>. The helper behind the counter is the <strong>backend</strong>. The backend keeps the secret and asks AI using safe rules.</p>
+  <div class="tool-note" style="font-family:var(--font-mono)">
+    Browser → KIDSGPT backend → AI → KIDSGPT backend → Browser
+  </div>
+
+  <label class="field" for="q-secret">Why should the secret stay in the backend instead of inside your HTML? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-secret" data-save data-label="Why secrets stay backend"></textarea>
+
+  <label class="field" for="q-backend-rules">What rules should the backend add before AI answers people? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-backend-rules" data-save data-label="Backend rules"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">💬</span><h2 style="margin:0">5 · Test Your Bot</h2></header>
+  <p>Try your bot before you ship it. The bot uses live facts from the Burnaby Public Library page for Bob Prittie Metrotown.</p>
+
+  <div id="chat" class="chat-box">
+    <div class="chat-msg bot">Hi. Set your bot style above, then ask a question.</div>
+  </div>
+
+  <div class="config-grid" style="align-items:end;margin-top:12px">
+    <div>
+      <label class="field" for="test-question">Ask a test question</label>
+      <input id="test-question" placeholder="Example: What are the hours today?">
+    </div>
+    <div>
+      <button class="btn violet" onclick="sendTestQuestion()">Ask my bot</button>
+    </div>
+  </div>
+
+  <div class="tool-note">
+    Test these: "Hi, my name is Nova" · "What are the hours?" · "Are you a real librarian?" · "Can I book a room?" · "Tell me about Mars."
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Sprint: Make The HTML</h2></header>
+  <p>Generate a standalone chatbot page. You can download it, preview it, and upload it for a share link.</p>
+  <p>
+    <button class="btn violet" onclick="buildChatbotHtml()">Build my chatbot HTML</button>
+    <button class="btn sun" onclick="downloadChatbotHtml()">Download HTML</button>
+  </p>
+  <textarea id="chatbot-html" rows="14" class="prompt-output" data-save data-label="Generated chatbot HTML"></textarea>
+  <p style="margin-top:16px">
+    <button class="btn violet" onclick="previewChatbot()">Preview safely</button>
+    <span id="preview-status" class="status-pill">not previewed yet</span>
+  </p>
+  <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts allow-forms" title="AI Library Helper preview"></iframe>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">7 · Trust Check</h2></header>
+  <p>Before upload, test how your bot behaves with tricky questions.</p>
+
+  <label class="field" for="q-real-librarian">Ask: "Are you a real librarian?" What did your bot say? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-real-librarian" data-save data-label="Are you a real librarian test"></textarea>
+
+  <label class="field" for="q-not-library">Ask something not about the library. Did your bot stay on task? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-not-library" data-save data-label="Non-library test"></textarea>
+
+  <label class="field" for="q-bot-change">What would you change to make your bot safer or more helpful? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-bot-change" data-save data-label="Bot improvement"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">8 · Upload And Share</h2></header>
+  <div class="tool-note">
+    <strong>External URL:</strong> Upload your chatbot HTML to get a private-ish share link. Anyone with the link can open it.
+  </div>
+  <p>
+    <button class="btn mint" onclick="uploadChatbot()">Upload chatbot</button>
+    <span id="upload-status" class="status-pill">not uploaded yet</span>
+  </p>
+  <div id="share-result" class="share-box" hidden></div>
+</section>
+
+<div class="notebook">
+  <h3>📓 My notebook</h3>
+  <p>Everything you typed today is saved on this computer. Download a copy to show your family or keep forever.</p>
+  <button class="btn sun" onclick="downloadNotebook('Week 5')">Download my answers</button>
+</div>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Week 5</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+const ENDPOINT = 'https://kidsgpt.vectorcraft.net/api/library-chat';
+const CLASS_CODE = 'libraryhelper108';
+
+const BO = [
+  {
+    prompt: 'A bot says: "I am the official librarian."',
+    a: 'Good: sounds important.',
+    b: 'Risky: it is pretending to be staff.',
+    win: 'b',
+    why: 'Helpers should not pretend to be real people or official staff.'
+  },
+  {
+    prompt: 'A bot says: "I am a student-built helper. Please ask staff to confirm important details."',
+    a: 'Good: honest and useful.',
+    b: 'Bad: it sounds too careful.',
+    win: 'a',
+    why: 'Honest boundaries make the bot more trustworthy.'
+  },
+  {
+    prompt: 'A bot does not know the room booking rule.',
+    a: 'Make up a rule so the visitor gets an answer.',
+    b: 'Say to ask library staff or check the official page.',
+    win: 'b',
+    why: 'A helpful bot admits what it does not know.'
+  },
+  {
+    prompt: 'A visitor says, "Hi, my name is Nova."',
+    a: 'Say hello warmly and invite a library question.',
+    b: 'Refuse because it is not a library fact.',
+    win: 'a',
+    why: 'Small friendly chat is okay. The bot still needs to stay on task.'
+  }
+];
+let boI = 0, boS = 0;
+function boStart(){ boI = 0; boS = 0; boNext(); }
+function boNext(){
+  const q = BO[boI];
+  document.getElementById('bo-question').textContent = q.prompt;
+  document.getElementById('bo-feedback').textContent = '';
+  document.getElementById('bo-round').textContent = boI + 1;
+  document.getElementById('bo-bar').style.width = (boI / BO.length * 100) + '%';
+  document.getElementById('bo-choices').innerHTML =
+    `<button class="btn" onclick="boAnswer('a')">A: ${q.a}</button>
+     <button class="btn" onclick="boAnswer('b')">B: ${q.b}</button>`;
+}
+function boAnswer(choice){
+  const q = BO[boI], fb = document.getElementById('bo-feedback');
+  const right = choice === q.win;
+  if (right) boS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = (right ? '✓ Good bot move. ' : '✗ Try the safer bot move. ') + q.why;
+  document.getElementById('bo-score').textContent = boS;
+  boI++;
+  document.getElementById('bo-choices').innerHTML = boI < BO.length
+    ? '<button class="btn primary" onclick="boNext()">Next case ▶</button>'
+    : '<button class="btn mint" onclick="boEnd()">Unlock bot rules 🏁</button>';
+}
+function boEnd(){
+  document.getElementById('bo-bar').style.width = '100%';
+  document.getElementById('bo-question').textContent =
+    `You solved ${boS}/4 cases. Now design a bot with personality, manners, and boundaries.`;
+  document.getElementById('bo-choices').innerHTML = '<button class="btn" onclick="boStart()">Play again ↺</button>';
+  document.getElementById('bo-feedback').textContent = '';
+}
+
+function value(id, fallback = ''){
+  const el = document.getElementById(id);
+  return (el && el.value.trim()) || fallback;
+}
+function escapeHtml(text){
+  return String(text || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function botConfig(){
+  return {
+    botName: value('bot-name', 'Library Helper'),
+    creatorName: (currentStudent() || {}).name || 'KIDSGPT student',
+    personality: value('bot-personality', 'friendly, short answers, clear'),
+    greeting: value('bot-greeting', 'Hi! Ask me about the library.'),
+    specialStyle: value('bot-special', ''),
+    etiquette: value('bot-etiquette', '')
+      .split('\n')
+      .map(item => item.trim())
+      .filter(Boolean)
+  };
+}
+function addChatMessage(text, who){
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + who;
+  div.textContent = text;
+  document.getElementById('chat').appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return div;
+}
+async function sendTestQuestion(){
+  const input = document.getElementById('test-question');
+  const question = input.value.trim();
+  if (!question) return;
+  addChatMessage(question, 'user');
+  input.value = '';
+  const thinking = addChatMessage('Thinking...', 'bot');
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        classCode: CLASS_CODE,
+        language: value('bot-language', 'English'),
+        question,
+        botConfig: botConfig()
+      })
+    });
+    const data = await response.json();
+    thinking.textContent = response.ok ? data.answer : 'Error: ' + data.error;
+  } catch (error) {
+    thinking.textContent = 'Could not reach the backend: ' + error.message;
+  }
+}
+document.getElementById('test-question').addEventListener('keydown', event => {
+  if (event.key === 'Enter') sendTestQuestion();
+});
+
+function colorVars(style){
+  const styles = {
+    blue: ['#2f80ed', '#35c2a1', '#ffd166'],
+    sun: ['#f4a261', '#ffd166', '#2a9d8f'],
+    berry: ['#9b5de5', '#f15bb5', '#fee440'],
+    forest: ['#2d6a4f', '#95d5b2', '#ffd166']
+  };
+  return styles[style] || styles.blue;
+}
+function buildChatbotHtml(){
+  const cfg = botConfig();
+  const lang = value('bot-language', 'English');
+  const [primary, accent, sun] = colorVars(value('bot-color', 'blue'));
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(cfg.botName)}</title>
+<meta name="robots" content="noindex">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#eef7fb;color:#17223b}
+main{max-width:780px;margin:0 auto;padding:24px}
+header{background:linear-gradient(135deg,${primary},${accent});color:white;padding:30px 24px;border-bottom:4px solid #17223b}
+h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3.2rem)}
+.card{background:white;border:2px solid #17223b;border-radius:12px;box-shadow:4px 4px 0 #17223b;padding:16px;margin:16px 0}
+label{font-weight:700;display:block;margin-top:12px}
+input,select,textarea{width:100%;padding:10px;border:2px solid #17223b;border-radius:8px;font-size:1rem;box-sizing:border-box}
+button{border:2px solid #17223b;border-radius:10px;background:${sun};padding:11px 14px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 #17223b}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:250px}
+.msg{padding:10px 12px;border:2px solid #17223b;border-radius:10px;max-width:86%;white-space:pre-wrap}
+.user{align-self:flex-end;background:#dff3ff}.bot{align-self:flex-start;background:#f6fff2}
+.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}.small{font-size:.9rem;color:#4b5563}
+@media(max-width:640px){.row{grid-template-columns:1fr}button{width:100%}}
+</style>
+</head>
+<body>
+<header><h1>${escapeHtml(cfg.botName)}</h1><p>${escapeHtml(cfg.greeting)}</p></header>
+<main>
+<section class="card">
+  <h2>Ask The Helper</h2>
+  <label for="language">Language</label>
+  <select id="language">
+    ${['English','Punjabi','Simplified Chinese','Korean','Spanish','French'].map(item => `<option${item === lang ? ' selected' : ''}>${item}</option>`).join('')}
+  </select>
+  <div id="chat" class="chat"><div class="msg bot">${escapeHtml(cfg.greeting)}</div></div>
+  <div class="row">
+    <div><label for="question">Question</label><input id="question" placeholder="Example: What are the hours today?"></div>
+    <button onclick="sendQuestion()">Ask</button>
+  </div>
+  <p class="small">Student-built helper. Please ask library staff to confirm important details.</p>
+</section>
+</main>
+<script>
+const ENDPOINT = "https://kidsgpt.vectorcraft.net/api/library-chat";
+const CLASS_CODE = "libraryhelper108";
+const BOT_CONFIG = ${JSON.stringify(cfg, null, 2)};
+function addMessage(text, who){
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  div.textContent = text;
+  document.getElementById("chat").appendChild(div);
+  div.scrollIntoView({behavior:"smooth",block:"end"});
+  return div;
+}
+async function sendQuestion(){
+  const input = document.getElementById("question");
+  const question = input.value.trim();
+  if(!question) return;
+  const language = document.getElementById("language").value;
+  addMessage(question, "user");
+  input.value = "";
+  const thinking = addMessage("Thinking...", "bot");
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({classCode: CLASS_CODE, language, question, botConfig: BOT_CONFIG})
+    });
+    const data = await response.json();
+    thinking.textContent = response.ok ? data.answer : "Error: " + data.error;
+  } catch (error) {
+    thinking.textContent = "Could not reach the backend: " + error.message;
+  }
+}
+document.getElementById("question").addEventListener("keydown", event => {
+  if(event.key === "Enter") sendQuestion();
+});
+<\/script>
+</body>
+</html>`;
+  document.getElementById('chatbot-html').value = html;
+  return html;
+}
+function looksLikeHtml(html){
+  return /^<!doctype html>/i.test(html) || /<html[\s>]/i.test(html);
+}
+function previewChatbot(){
+  const html = document.getElementById('chatbot-html').value.trim() || buildChatbotHtml();
+  const status = document.getElementById('preview-status');
+  if (!looksLikeHtml(html)) {
+    status.textContent = 'build HTML first';
+    status.className = 'status-pill bad';
+    return;
+  }
+  document.getElementById('preview-frame').srcdoc = html;
+  status.textContent = 'preview ready';
+  status.className = 'status-pill good';
+}
+function downloadChatbotHtml(){
+  const html = document.getElementById('chatbot-html').value.trim() || buildChatbotHtml();
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${value('bot-name', 'library-helper').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+async function uploadChatbot(){
+  const status = document.getElementById('upload-status');
+  const resultBox = document.getElementById('share-result');
+  status.textContent = 'uploading...';
+  status.className = 'status-pill';
+  resultBox.hidden = true;
+  try {
+    const html = document.getElementById('chatbot-html').value.trim() || buildChatbotHtml();
+    if (!looksLikeHtml(html)) throw new Error('Build your chatbot HTML first.');
+    const response = await fetch('/api/upload-story', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student: (currentStudent() || {}).name || 'unknown',
+        title: value('bot-name', 'AI Library Helper'),
+        html
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not upload.');
+    status.textContent = 'uploaded';
+    status.className = 'status-pill good';
+    resultBox.innerHTML = `<strong>External URL:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a>`;
+    resultBox.hidden = false;
+  } catch (error) {
+    status.textContent = error.message || 'upload unavailable';
+    status.className = 'status-pill bad';
+  }
+}
+</script>
+</body>
+</html>

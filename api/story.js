@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
         "script-src 'unsafe-inline'",
         "font-src https: data:",
         "media-src none",
-        "connect-src none",
+        "connect-src https://kidsgpt.vectorcraft.net",
         "base-uri 'none'",
         "form-action 'none'",
         "frame-ancestors 'none'"
