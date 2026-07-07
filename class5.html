@@ -16,6 +16,10 @@
 .mini-rule span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700;text-align:center}
 .choice-row.stack{display:grid;grid-template-columns:1fr;gap:10px}
 .config-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bot-form input,.bot-form select,.bot-form textarea{width:100%;box-sizing:border-box}
+.bot-form textarea.short{min-height:68px;resize:vertical}
+.bot-form textarea.medium{min-height:86px;resize:vertical}
+.bot-form .full-row{grid-column:1/-1}
 .prompt-output{font-family:var(--font-mono);font-size:.85rem}
 .preview-frame{width:100%;height:520px;border:2px solid var(--ink);border-radius:12px;background:#fff;box-shadow:var(--shadow-sm)}
 .chat-box{display:flex;flex-direction:column;gap:10px;min-height:210px;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:12px}
@@ -85,11 +89,12 @@
   <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Manners For Machines</h2></header>
   <p><strong>Today's design skill:</strong> bot etiquette. Kid phrase: decide your bot's manners before you let it talk to people.</p>
 
+  <div class="bot-form">
   <label class="field" for="bot-name">Bot name <span class="savehint">saved ✓</span></label>
   <input id="bot-name" data-save data-label="Bot name" value="Nova Library Helper">
 
   <label class="field" for="bot-greeting">Greeting <span class="savehint">saved ✓</span></label>
-  <input id="bot-greeting" data-save data-label="Bot greeting" value="Hi! Ask me about the library.">
+  <textarea id="bot-greeting" class="short" data-save data-label="Bot greeting">Hi! Ask me about the library.</textarea>
 
   <div class="config-grid">
     <div>
@@ -115,7 +120,7 @@
   </div>
 
   <label class="field" for="bot-personality">Personality <span class="savehint">saved ✓</span></label>
-  <input id="bot-personality" data-save data-label="Bot personality" value="friendly, short answers, curious, a little playful">
+  <textarea id="bot-personality" class="short" data-save data-label="Bot personality">friendly, short answers, curious, a little playful</textarea>
 
   <label class="field" for="bot-etiquette">Etiquette rules <span class="savehint">saved ✓</span></label>
   <textarea id="bot-etiquette" data-save data-label="Bot etiquette rules">Do not pretend to be a real librarian.
@@ -124,10 +129,11 @@ Be kind and clear.
 Do not answer non-library questions.</textarea>
 
   <label class="field" for="bot-special">Special touch <span class="savehint">saved ✓</span></label>
-  <input id="bot-special" data-save data-label="Bot special touch" value="Start with a warm phrase like 'Good question.'">
+  <textarea id="bot-special" class="short" data-save data-label="Bot special touch">Start with a warm phrase like 'Good question.'</textarea>
 
   <div class="tool-note">
     <strong>Rule:</strong> give your bot a personality, not a fake identity. It can be playful, calm, cheerful, or formal. It should not pretend to be a real librarian, celebrity, or character.
+  </div>
   </div>
 </section>
 
