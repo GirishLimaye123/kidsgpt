@@ -128,7 +128,9 @@ async function callOpenAI({ question, language, botConfigText, libraryFacts }) {
       model,
       instructions,
       input,
-      max_output_tokens: 300
+      reasoning: { effort: 'minimal' },
+      text: { verbosity: 'low' },
+      max_output_tokens: 900
     })
   });
 
