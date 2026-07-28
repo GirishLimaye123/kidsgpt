@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 6: AI Book Explorer — KIDSGPT</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.tool-note{border:2px dashed var(--ink);border-radius:12px;background:#fff;padding:14px;margin:12px 0}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.78rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:4px 10px;box-shadow:2px 2px 0 var(--ink)}
+.status-pill.good{background:#E8FAF5;color:#0B755F}
+.status-pill.bad{background:#FFF0EE;color:#B93124}
+.mini-rule{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mini-rule span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px;font-weight:700;text-align:center}
+.source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.source-list span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px}
+.book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.book-card{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;box-shadow:3px 3px 0 var(--ink)}
+.book-card h3{margin:0 0 8px}
+.book-card input,.book-card textarea{width:100%;box-sizing:border-box}
+.book-card textarea{min-height:82px}
+.prompt-output{font-family:var(--font-mono);font-size:.85rem}
+.iteration-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.iteration-grid span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px}
+.preview-frame{width:100%;height:460px;border:2px solid var(--ink);border-radius:12px;background:#fff;box-shadow:var(--shadow-sm)}
+.share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
+.share-box a{font-weight:700;color:var(--design)}
+@media (max-width:760px){.mini-rule,.source-list,.book-grid,.iteration-grid{grid-template-columns:1fr}.preview-frame{height:360px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-k">K</span> KIDSGPT</a>
+    <nav class="mainnav">
+      <a href="classes.html">← Mission control</a>
+      <a href="warmups.html">Warm-up arcade</a>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="section tight">
+  <p class="eyebrow">Module 1 · Week 6</p>
+  <h1>AI Book Explorer</h1>
+  <p style="max-width:68ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
+  Today you use book cover photos to build a tiny recommendation shelf. AI can look at images, but you will be the
+  fact-checker, sorter, designer, and publisher.</p>
+  <div class="pips"><span class="pip brain"></span><span class="pip design"></span><span class="pip build"></span><span class="pip guard"></span><span class="pip launch"></span></div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">📚</span><h2 style="margin:0">1 · Warm-up: Shelf Detective</h2></header>
+  <p>Pick the better book-helper move. At the end, unlock today's book builder rules.</p>
+  <div class="game-stage">
+    <div class="progress"><div id="sd-bar"></div></div>
+    <p class="big" id="sd-question">Press start!</p>
+    <div class="choice-row stack" id="sd-choices">
+      <button class="btn primary" onclick="sdStart()">Start shelf training ▶</button>
+    </div>
+    <p class="feedback" id="sd-feedback"></p>
+    <div class="scoreboard"><span>GOOD MOVES <span id="sd-score">0</span></span><span>CASE <span id="sd-round">0</span>/4</span></div>
+  </div>
+  <div class="mini-rule">
+    <span>Covers are okay</span>
+    <span>Check title and author</span>
+    <span>Sort for a real reader</span>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">🧠</span><h2 style="margin:0">2 · AI Talk: AI Has Eyes, But Not Perfect Eyes</h2></header>
+  <p><strong>Big idea:</strong> AI can look at a book cover and make a smart guess. It may read the title, author, mood, and genre. It can also be wrong, especially with blurry photos or fancy fonts.</p>
+
+  <label class="field" for="q-ai-see">What can AI probably learn from a book cover photo? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-ai-see" data-save data-label="What AI can learn from a cover"></textarea>
+
+  <label class="field" for="q-ai-wrong">What should we check before trusting AI's book facts? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-ai-wrong" data-save data-label="What to check before trusting AI"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip design">✏️</span><h2 style="margin:0">3 · Design Corner: Recommend For A Human</h2></header>
+  <p><strong>Today's design skill:</strong> recommendation design. Kid phrase: do not just sort books; help the right reader find the right next book.</p>
+  <p>Pick a reader type. Your bookshelf should feel like it was made for someone, not for everyone.</p>
+
+  <label class="field" for="reader-type">Who are you helping today? <span class="savehint">saved ✓</span></label>
+  <select id="reader-type" data-save data-label="Reader type">
+    <option>Kids who want funny books</option>
+    <option>Kids who want adventure</option>
+    <option>Readers who like mystery</option>
+    <option>People who want easy books</option>
+    <option>People who want to try something new</option>
+  </select>
+
+  <label class="field" for="reader-needs">What should your reader be able to choose? <span class="savehint">saved ✓</span></label>
+  <textarea id="reader-needs" data-save data-label="Reader needs">Mood, genre, age group, reading level, or how long the book feels.</textarea>
+
+  <label class="field" for="shelf-style">What should your bookshelf feel like? <span class="savehint">saved ✓</span></label>
+  <input id="shelf-style" data-save data-label="Bookshelf style" value="fun, colorful, easy to scan, like a mini library app">
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">📷</span><h2 style="margin:0">4 · Field Mission: Safe Book Photos</h2></header>
+  <p>Take photos of 2 to 4 book covers. Covers are enough. You do not need inside pages.</p>
+  <div class="source-list">
+    <span><strong>Best photo:</strong> one cover at a time, flat, readable title, no glare.</span>
+    <span><strong>Also okay:</strong> a small stack of covers if all titles are readable.</span>
+    <span><strong>Do not include:</strong> faces, names, library cards, barcodes close-up, addresses, or school papers.</span>
+    <span><strong>Inside pages:</strong> skip them today unless the teacher says one tiny excerpt is okay.</span>
+  </div>
+
+  <label class="field" for="photo-check">What did you check before uploading your photos to AI? <span class="savehint">saved ✓</span></label>
+  <textarea id="photo-check" data-save data-label="Photo safety check"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip brain">🪄</span><h2 style="margin:0">5 · AI Lab: Build Your Book Prompt</h2></header>
+  <p>Add quick notes about your books if you know them. Then copy the prompt into ChatGPT with your cover photos.</p>
+
+  <div class="book-grid">
+    <div class="book-card">
+      <h3>Book 1</h3>
+      <label class="field" for="book1">Title or notes <span class="savehint">saved ✓</span></label>
+      <textarea id="book1" data-save data-label="Book 1 notes"></textarea>
+    </div>
+    <div class="book-card">
+      <h3>Book 2</h3>
+      <label class="field" for="book2">Title or notes <span class="savehint">saved ✓</span></label>
+      <textarea id="book2" data-save data-label="Book 2 notes"></textarea>
+    </div>
+    <div class="book-card">
+      <h3>Book 3</h3>
+      <label class="field" for="book3">Title or notes <span class="savehint">saved ✓</span></label>
+      <textarea id="book3" data-save data-label="Book 3 notes"></textarea>
+    </div>
+    <div class="book-card">
+      <h3>Book 4</h3>
+      <label class="field" for="book4">Title or notes <span class="savehint">saved ✓</span></label>
+      <textarea id="book4" data-save data-label="Book 4 notes"></textarea>
+    </div>
+  </div>
+
+  <p><button class="btn violet" onclick="buildBookPrompt()">Build my ChatGPT prompt</button></p>
+  <textarea id="book-prompt" rows="18" readonly class="prompt-output"></textarea>
+  <p><button class="btn small" onclick="copyText('book-prompt','prompt-copied')">Copy prompt</button> <span id="prompt-copied" class="savehint">copied ✓</span></p>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Sprint: Review The AI Bookshelf</h2></header>
+  <p>Paste the complete page that ChatGPT gives you. Preview it here, then ask AI to revise anything that feels confusing, boring, unsafe, or wrong.</p>
+
+  <label class="field" for="shelf-title">Bookshelf title <span class="savehint">saved ✓</span></label>
+  <input type="text" id="shelf-title" data-save data-label="Bookshelf title" value="My AI Book Explorer">
+
+  <label class="field" for="bookshelf-html">Paste the complete page from ChatGPT <span class="savehint">saved ✓</span></label>
+  <textarea id="bookshelf-html" rows="16" class="prompt-output" data-save data-label="AI generated bookshelf HTML"></textarea>
+
+  <p style="margin-top:16px">
+    <button class="btn violet" onclick="previewBookshelf()">Preview safely</button>
+    <span id="preview-status" class="status-pill">not previewed yet</span>
+  </p>
+  <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts" title="AI bookshelf preview"></iframe>
+
+  <div class="tool-note">
+    <strong>Iterate with AI:</strong> after preview, ask ChatGPT for one change at a time.
+  </div>
+  <div class="iteration-grid">
+    <span>Make the filters clearer: mood, genre, or age group.</span>
+    <span>Add a "surprise me" button for one random recommendation.</span>
+    <span>Make each card say who would like the book.</span>
+    <span>Fix any title, author, or genre that AI guessed wrong.</span>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">🛡️</span><h2 style="margin:0">7 · Trust Check Before Upload</h2></header>
+  <p>AI recommendations should be useful, honest, and safe to share.</p>
+
+  <label class="field" for="q-facts">Did you check every title and author? What did you fix? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-facts" data-save data-label="Title and author check"></textarea>
+
+  <label class="field" for="q-recommend">Does each recommendation explain who might like the book? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-recommend" data-save data-label="Recommendation usefulness check"></textarea>
+
+  <label class="field" for="q-private">Is every photo safe to publish? No faces, names, cards, barcodes close-up, or private papers. <span class="savehint">saved ✓</span></label>
+  <textarea id="q-private" data-save data-label="Publish safety check"></textarea>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">8 · Upload And Share</h2></header>
+  <div class="tool-note">
+    <strong>External URL:</strong> Upload your Book Explorer page to get a private-ish share link. Anyone with the link can open it.
+  </div>
+  <p>
+    <button class="btn mint" onclick="uploadBookshelf()">Upload book explorer</button>
+    <span id="upload-status" class="status-pill">not uploaded yet</span>
+  </p>
+  <div id="share-result" class="share-box" hidden></div>
+</section>
+
+<div class="notebook">
+  <h3>📓 My notebook</h3>
+  <p>Everything you typed today is saved on this computer. Download a copy to show your family or keep forever.</p>
+  <button class="btn sun" onclick="downloadNotebook('Week 6')">Download my answers</button>
+</div>
+
+</main>
+
+<footer class="site"><div class="wrap"><span>© KIDSGPT · Week 6</span><span>Logged in as <strong class="student-name">builder</strong></span></div></footer>
+
+<script src="students.js"></script>
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+const SD = [
+  {
+    prompt: 'AI reads a blurry cover and guesses the author.',
+    a: 'Publish it because AI sounded confident.',
+    b: 'Check the actual cover or library catalog first.',
+    win: 'b',
+    why: 'Book facts are easy to verify, so builders should check them.'
+  },
+  {
+    prompt: 'You want to photograph a page inside a book.',
+    a: 'Use the cover instead, unless the teacher says a tiny excerpt is okay.',
+    b: 'Upload lots of pages so AI can understand everything.',
+    win: 'a',
+    why: 'Covers teach image AI without copying a big chunk of someone else\'s book.'
+  },
+  {
+    prompt: 'A kid says they like funny animal stories.',
+    a: 'Recommend every book on the shelf.',
+    b: 'Filter by mood and topic, then explain why one book fits.',
+    win: 'b',
+    why: 'A good recommendation is personal and explains its reason.'
+  },
+  {
+    prompt: 'Your photo shows a library card next to the book.',
+    a: 'Retake the photo without the card.',
+    b: 'Crop later and hope nobody notices.',
+    win: 'a',
+    why: 'Private information should stay out of the upload from the start.'
+  }
+];
+let sdI = 0, sdS = 0;
+function sdStart(){ sdI = 0; sdS = 0; sdNext(); }
+function sdNext(){
+  const q = SD[sdI];
+  document.getElementById('sd-question').textContent = q.prompt;
+  document.getElementById('sd-feedback').textContent = '';
+  document.getElementById('sd-round').textContent = sdI + 1;
+  document.getElementById('sd-bar').style.width = (sdI / SD.length * 100) + '%';
+  document.getElementById('sd-choices').innerHTML =
+    `<button class="btn" onclick="sdAnswer('a')">A: ${q.a}</button>
+     <button class="btn" onclick="sdAnswer('b')">B: ${q.b}</button>`;
+}
+function sdAnswer(choice){
+  const q = SD[sdI], fb = document.getElementById('sd-feedback');
+  const right = choice === q.win;
+  if (right) sdS++;
+  fb.className = 'feedback ' + (right ? 'good' : 'bad');
+  fb.textContent = (right ? '✓ Strong shelf move. ' : '✗ Try the safer book-builder move. ') + q.why;
+  document.getElementById('sd-score').textContent = sdS;
+  sdI++;
+  document.getElementById('sd-choices').innerHTML = sdI < SD.length
+    ? '<button class="btn primary" onclick="sdNext()">Next case ▶</button>'
+    : '<button class="btn mint" onclick="sdEnd()">Unlock book rules 🏁</button>';
+}
+function sdEnd(){
+  document.getElementById('sd-bar').style.width = '100%';
+  document.getElementById('sd-question').textContent =
+    `You solved ${sdS}/4 cases. Now build a shelf that is useful, truthful, and safe to share.`;
+  document.getElementById('sd-choices').innerHTML = '<button class="btn" onclick="sdStart()">Play again ↺</button>';
+  document.getElementById('sd-feedback').textContent = '';
+}
+
+function value(id, fallback = ''){
+  const el = document.getElementById(id);
+  return (el && el.value.trim()) || fallback;
+}
+function escapeHtml(text){
+  return String(text || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function copyText(id, copiedId){
+  navigator.clipboard.writeText(document.getElementById(id).value || '');
+  const c = document.getElementById(copiedId);
+  c.classList.add('show'); setTimeout(() => c.classList.remove('show'), 1200);
+}
+function buildBookPrompt(){
+  const books = [1,2,3,4].map(n => value(`book${n}`, '')).filter(Boolean);
+  const notes = books.length ? books.map((book, i) => `- Book ${i + 1}: ${book}`).join('\n') : '- I will upload 2 to 4 book cover photos. Please read the covers.';
+  const reader = value('reader-type', 'kids looking for a good next book');
+  const needs = value('reader-needs', 'mood, genre, age group, and reading level');
+  const style = value('shelf-style', 'fun, colorful, easy to scan, like a mini library app');
+  document.getElementById('book-prompt').value =
+`Look at these book cover photos and help me build a useful Book Explorer webpage.
+
+My reader:
+- ${reader}
+
+Reader choices to support:
+- ${needs}
+
+My style:
+- ${style}
+
+My notes:
+${notes}
+
+Create one complete HTML file for an AI Book Explorer.
+
+Rules:
+- Use only the book covers and notes I provide.
+- Identify each book title and author from the cover if readable.
+- If a title or author is not readable, write "not visible in photo" for that field only.
+- Do not invent plot details. If you are unsure, say "AI guess - please check."
+- For each book, create a card with title, author, likely genre, mood tags, age group, and a short "Who might like this?" recommendation.
+- Explain each recommendation in one sentence.
+- Add interactive filters so readers can choose by mood, genre, age group, or reading level.
+- Add a match counter that updates when filters change.
+- Add a Reset filters button and a Surprise me button.
+- Add a fun cover section titled "AI Book Explorer" with a short subtitle.
+- Make it feel fun for 11-year-old builders and useful for real readers.
+- Use cheerful colors, clear cards, and buttons that are easy to tap.
+- Include a "Fact check" section listing any title, author, genre, or age group that needs checking.
+- Include a privacy note: "Photos should show book covers only. Do not share faces, library cards, names, or private papers."
+- Use only one file: HTML with inline CSS and inline JavaScript.
+- Do not use external libraries, remote fonts, remote images, or links that run code.
+- If you include book cover images, embed only the images I uploaded or use simple colored placeholders.
+
+Return only the complete HTML file, starting with <!doctype html>.`;
+}
+
+function looksLikeHtml(html){
+  return /^<!doctype html>/i.test(html) || /<html[\s>]/i.test(html);
+}
+function previewBookshelf(){
+  const html = document.getElementById('bookshelf-html').value.trim();
+  const status = document.getElementById('preview-status');
+  const frame = document.getElementById('preview-frame');
+  if (!looksLikeHtml(html)) {
+    status.textContent = 'paste complete page first';
+    status.className = 'status-pill bad';
+    frame.removeAttribute('srcdoc');
+    return;
+  }
+  frame.srcdoc = html;
+  status.textContent = 'preview ready';
+  status.className = 'status-pill good';
+}
+async function uploadBookshelf(){
+  const status = document.getElementById('upload-status');
+  const resultBox = document.getElementById('share-result');
+  status.textContent = 'uploading...';
+  status.className = 'status-pill';
+  resultBox.hidden = true;
+  try {
+    const html = document.getElementById('bookshelf-html').value.trim();
+    if (!looksLikeHtml(html)) throw new Error('Paste the AI-generated page first.');
+    const response = await fetch('/api/upload-story', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student: (currentStudent() || {}).name || 'unknown',
+        title: value('shelf-title', 'AI Book Explorer'),
+        html
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not upload.');
+    status.textContent = 'uploaded';
+    status.className = 'status-pill good';
+    resultBox.innerHTML = `<strong>External URL:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a><p style="margin-bottom:0">Share after a teacher checks the facts and photo safety.</p>`;
+    resultBox.hidden = false;
+  } catch (error) {
+    status.textContent = error.message || 'upload unavailable';
+    status.className = 'status-pill bad';
+  }
+}
+</script>
+</body>
+</html>
