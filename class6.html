@@ -17,25 +17,17 @@
 .source-list,.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .source-list span,.result-card{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:10px}
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
-.cover-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
-.cover-tile{border:2px solid var(--ink);border-radius:12px;background:#fff;min-height:150px;padding:8px;display:grid;place-items:center;text-align:center;box-shadow:3px 3px 0 var(--ink);overflow:hidden}
-.cover-tile img{width:100%;height:170px;object-fit:cover;border-radius:8px;border:1px solid #d7deea}
-.cover-tile span{color:var(--ink-soft);font-weight:700}
-.cover-uploader{border:3px dashed var(--ink);border-radius:12px;background:#f5fbff;padding:22px 16px;text-align:center;cursor:pointer;transition:background .15s ease,transform .15s ease}
-.cover-uploader:hover,.cover-uploader:focus-visible,.cover-uploader.dragging{background:#e7f7ff;transform:translateY(-1px);outline:3px solid var(--sky);outline-offset:2px}
-.cover-uploader p{margin:10px 0 0;color:var(--ink-soft);font-size:.9rem}
-.cover-uploader .btn{pointer-events:auto}
-.visually-hidden-file{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.match-panel{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:16px;box-shadow:var(--shadow-sm)}
-.match-panel h3{margin-top:0}
-.match-panel input,.match-panel select,.match-panel textarea{width:100%;box-sizing:border-box}
-.match-panel textarea{min-height:92px}
-.recommendation{border:3px solid var(--ink);border-radius:14px;background:#fff8d8;padding:16px;margin:14px 0;box-shadow:4px 4px 0 var(--ink)}
-.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.tag{display:inline-flex;border:2px solid var(--ink);border-radius:999px;background:#eef7fb;padding:3px 9px;font-size:.85rem;font-weight:700}
+.config-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.config-grid .full{grid-column:1/-1}
+.config-grid input,.config-grid select,.config-grid textarea{width:100%;box-sizing:border-box}
+.config-grid textarea{min-height:92px}
+.prompt-output{font-family:var(--font-mono);font-size:.82rem;min-height:420px}
+.preview-frame{width:100%;height:560px;border:2px solid var(--ink);border-radius:12px;background:#fff;box-shadow:var(--shadow-sm)}
+.step-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.step-list span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:12px;font-weight:700}
 .share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
 .share-box a{font-weight:700;color:var(--design)}
-@media (max-width:760px){.mini-rule,.source-list,.result-grid,.match-grid,.cover-strip{grid-template-columns:1fr}.cover-tile img{height:220px}}
+@media (max-width:760px){.mini-rule,.source-list,.config-grid,.step-list{grid-template-columns:1fr}.config-grid .full{grid-column:auto}.preview-frame{height:420px}.prompt-output{min-height:360px}}
 </style>
 </head>
 <body>
@@ -57,8 +49,8 @@
   <p class="eyebrow">Module 1 · Week 6</p>
   <h1>Book Matchmaker</h1>
   <p style="max-width:68ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
-  Today you build a live AI app. Take up to 3 safe book cover photos, tell AI what kind of book you want,
-  and the backend helper asks the mini model to recommend one from your covers.</p>
+  Today you design your own live AI app. ChatGPT will write one HTML file for you. Your app will take up to
+  3 safe book-cover photos and ask our mini model to recommend one.</p>
   <div class="pips"><span class="pip brain"></span><span class="pip design"></span><span class="pip build"></span><span class="pip guard"></span><span class="pip launch"></span></div>
 </section>
 
@@ -131,64 +123,101 @@
 </section>
 
 <section class="lesson-section">
-  <header><span class="chip build">🔨</span><h2 style="margin:0">5 · Build Sprint: Ask The Mini Model</h2></header>
-  <p>This is the live app part. Your page sends the cover photos to the backend helper. The backend keeps the secret and asks AI.</p>
-
-  <div class="match-grid">
-    <div class="match-panel">
-      <h3>Cover Photos</h3>
-      <div id="cover-drop-zone" class="cover-uploader" role="button" tabindex="0" aria-label="Add up to 3 book cover photos">
-        <button id="cover-browse" class="btn violet" type="button">📁 Choose photos</button>
-        <p>Or drag photos here from Finder. You can also paste a copied image with ⌘V.</p>
-      </div>
-      <input id="cover-files" class="visually-hidden-file" type="file" accept="image/png,image/jpeg,image/webp" multiple>
-      <div id="cover-preview" class="cover-strip">
-        <div class="cover-tile"><span>Cover 1</span></div>
-        <div class="cover-tile"><span>Cover 2</span></div>
-        <div class="cover-tile"><span>Cover 3</span></div>
-      </div>
-
-      <label class="field" for="book-notes">Optional notes for AI <span class="savehint">saved ✓</span></label>
-      <textarea id="book-notes" data-save data-label="Book notes" placeholder="Example: Book 2 is part of a series. Book 3 looked funny."></textarea>
+  <header><span class="chip design">🎨</span><h2 style="margin:0">5 · App Studio: Make It Yours</h2></header>
+  <p>You are the product designer. These choices become part of the prompt that builds your app.</p>
+  <div class="config-grid">
+    <div>
+      <label class="field" for="app-name">App name</label>
+      <input id="app-name" type="text" value="My Book Matchmaker">
     </div>
-
-    <div class="match-panel">
-      <h3>Ask For A Match</h3>
-      <label class="field" for="match-question">What should the app help choose?</label>
-      <textarea id="match-question">Which book should I read if I want something exciting but not too scary?</textarea>
-      <p><button class="btn violet" onclick="askBookVision()">Ask the mini model</button></p>
-      <p><span id="vision-status" class="status-pill">waiting for covers</span></p>
-      <div class="tool-note">
-        <strong>Backend path:</strong> your page → secret helper → AI vision → secret helper → your page.
-      </div>
+    <div>
+      <label class="field" for="app-style">Visual style</label>
+      <select id="app-style">
+        <option>Colorful comic-book lab</option>
+        <option>Cozy magical library</option>
+        <option>Bold space adventure</option>
+        <option>Clean modern bookshelf</option>
+        <option>Playful puppy book club</option>
+      </select>
+    </div>
+    <div>
+      <label class="field" for="app-color">Main color</label>
+      <select id="app-color">
+        <option>Teal and yellow</option>
+        <option>Purple and mint</option>
+        <option>Red and sky blue</option>
+        <option>Green and coral</option>
+        <option>Black, white, and one bright color</option>
+      </select>
+    </div>
+    <div>
+      <label class="field" for="app-voice">App personality</label>
+      <select id="app-voice">
+        <option>Cheerful and encouraging</option>
+        <option>Funny but helpful</option>
+        <option>Calm and thoughtful</option>
+        <option>Mysterious and dramatic</option>
+        <option>Fast and energetic</option>
+      </select>
+    </div>
+    <div class="full">
+      <label class="field" for="app-special">One special feature or rule</label>
+      <textarea id="app-special" placeholder="Example: Add a surprise-me button, explain every recommendation, or celebrate with confetti.">Always explain why the chosen book matches the reader.</textarea>
     </div>
   </div>
-
-  <div id="match-output"></div>
 </section>
 
 <section class="lesson-section">
-  <header><span class="chip guard">🛡️</span><h2 style="margin:0">6 · Trust Check Before Share</h2></header>
-  <p>AI recommendations should be useful, honest, and safe to show someone else.</p>
-
-  <label class="field" for="q-facts">Did you check every title and author? What did you fix? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-facts" data-save data-label="Title and author check"></textarea>
-
-  <label class="field" for="q-recommend">Does the recommendation explain who might like the book and why? <span class="savehint">saved ✓</span></label>
-  <textarea id="q-recommend" data-save data-label="Recommendation usefulness check"></textarea>
-
-  <label class="field" for="q-private">Is every photo safe? No faces, names, cards, barcodes close-up, or private papers. <span class="savehint">saved ✓</span></label>
-  <textarea id="q-private" data-save data-label="Share safety check"></textarea>
-</section>
-
-<section class="lesson-section">
-  <header><span class="chip launch">🚀</span><h2 style="margin:0">7 · Upload And Share</h2></header>
+  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Prompt: Give This To ChatGPT</h2></header>
+  <p>Click once. The prompt includes the mini-model connection and all the tricky code instructions. You do not need to add a secret.</p>
+  <p>
+    <button class="btn violet" onclick="buildPrompt()">Build my one-shot prompt</button>
+    <button class="btn sun" onclick="copyPrompt()">Copy prompt</button>
+    <span id="prompt-status" class="status-pill">not built yet</span>
+  </p>
+  <textarea id="app-prompt" class="prompt-output" aria-label="Generated ChatGPT prompt" spellcheck="false"></textarea>
   <div class="tool-note">
-    <strong>External URL:</strong> Upload your Book Matchmaker result to get a private-ish share link. Anyone with the link can open it.
+    <strong>How your app gets AI:</strong> ChatGPT puts our KIDSGPT helper address in the HTML. Your app sends photos to that helper.
+    The helper keeps the real OpenAI secret and returns the book recommendation.
+  </div>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip build">💬</span><h2 style="margin:0">7 · Create It In ChatGPT</h2></header>
+  <div class="step-list">
+    <span>1. Copy your prompt and paste it into ChatGPT.</span>
+    <span>2. Ask ChatGPT to create the downloadable HTML file.</span>
+    <span>3. Download the file named book-matchmaker.html.</span>
+  </div>
+  <p>If ChatGPT explains instead of making the file, say: <strong>“Please create the complete downloadable HTML file now.”</strong></p>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip guard">🧪</span><h2 style="margin:0">8 · Test Your App</h2></header>
+  <label class="field" for="student-app-file">Choose the HTML file ChatGPT made</label>
+  <input id="student-app-file" type="file" accept=".html,text/html">
+  <label class="field" for="student-app-html">Or paste the complete HTML here</label>
+  <textarea id="student-app-html" rows="12" class="prompt-output" placeholder="Paste from &lt;!doctype html&gt; to &lt;/html&gt;"></textarea>
+  <p>
+    <button class="btn violet" onclick="previewStudentApp()">Preview my app</button>
+    <button class="btn sun" onclick="downloadStudentApp()">Download HTML</button>
+    <span id="preview-status" class="status-pill">not tested yet</span>
+  </p>
+  <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts allow-forms" title="Book recommender preview"></iframe>
+</section>
+
+<section class="lesson-section">
+  <header><span class="chip launch">🚀</span><h2 style="margin:0">9 · Check, Upload, And Share</h2></header>
+  <label class="field" for="q-facts">Did you test it with real cover photos and check the titles? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-facts" data-save data-label="Book app test"></textarea>
+  <label class="field" for="q-private">Are the photos safe: no faces, names, library cards, or private papers? <span class="savehint">saved ✓</span></label>
+  <textarea id="q-private" data-save data-label="Book app photo safety"></textarea>
+  <div class="tool-note">
+    <strong>External URL:</strong> Upload your finished app to get a private-ish share link. Anyone with the link can open and use your recommender.
   </div>
   <p>
-    <button class="btn mint" onclick="uploadMatchmaker()">Upload my match</button>
-    <span id="upload-status" class="status-pill">ask AI first</span>
+    <button class="btn mint" onclick="uploadStudentApp()">Upload my app</button>
+    <span id="upload-status" class="status-pill">test first</span>
   </p>
   <div id="share-result" class="share-box" hidden></div>
 </section>
@@ -208,7 +237,6 @@
 <script>
 requireLogin();
 
-const CLASS_CODE = 'libraryhelper108';
 const SD = [
   {
     prompt: 'AI reads a blurry cover and guesses the author.',
@@ -239,7 +267,7 @@ const SD = [
     why: 'Private information should stay out of the upload from the start.'
   }
 ];
-let sdI = 0, sdS = 0, coverImages = [], lastMatch = null;
+let sdI = 0, sdS = 0;
 
 function sdStart(){ sdI = 0; sdS = 0; sdNext(); }
 function sdNext(){
@@ -276,242 +304,155 @@ function value(id, fallback = ''){
   const el = document.getElementById(id);
   return (el && el.value.trim()) || fallback;
 }
-function escapeHtml(text){
-  return String(text || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-}
-function tags(items){
-  return (items || []).filter(Boolean).slice(0, 6).map(item => `<span class="tag">${escapeHtml(item)}</span>`).join('');
-}
 function setStatus(id, text, kind = ''){
   const el = document.getElementById(id);
   el.textContent = text;
   el.className = 'status-pill' + (kind ? ' ' + kind : '');
 }
-function loadImage(src){
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('Could not read one image.'));
-    img.src = src;
-  });
-}
-async function fileToDataUrl(file){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error('Could not load image.'));
-    reader.readAsDataURL(file);
-  });
-}
-async function shrinkDataUrl(dataUrl, maxSide, quality){
-  const img = await loadImage(dataUrl);
-  const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.max(1, Math.round(img.width * scale));
-  canvas.height = Math.max(1, Math.round(img.height * scale));
-  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL('image/jpeg', quality);
-}
-async function prepareCover(file){
-  const raw = await fileToDataUrl(file);
-  return {
-    name: file.name,
-    dataUrl: await shrinkDataUrl(raw, 900, 0.72),
-    thumbUrl: await shrinkDataUrl(raw, 380, 0.62)
-  };
-}
-function renderCoverPreview(){
-  const tiles = [0, 1, 2].map(i => {
-    const image = coverImages[i];
-    return `<div class="cover-tile">${image ? `<img alt="Cover ${i + 1}" src="${image.thumbUrl}">` : `<span>Cover ${i + 1}</span>`}</div>`;
-  }).join('');
-  document.getElementById('cover-preview').innerHTML = tiles;
-}
-async function useCoverFiles(fileList){
-  const files = Array.from(fileList || [])
-    .filter(file => /^image\/(png|jpeg|webp)$/.test(file.type))
-    .slice(0, 3);
-  coverImages = [];
-  setStatus('vision-status', 'preparing photos...');
-  try {
-    for (const file of files) coverImages.push(await prepareCover(file));
-    renderCoverPreview();
-    setStatus(
-      'vision-status',
-      coverImages.length ? `${coverImages.length} cover(s) ready` : 'please add JPG, PNG, or WebP photos',
-      coverImages.length ? 'good' : 'bad'
-    );
-  } catch (error) {
-    setStatus('vision-status', error.message, 'bad');
+function buildPrompt(){
+  const prompt = `Create one complete, polished, standalone HTML file named book-matchmaker.html.
+
+This is a real interactive app made by an 11-year-old builder. Return ONLY the complete HTML, beginning with <!doctype html> and ending with </html>. Do not use Markdown fences. Do not give explanations before or after the code.
+
+STUDENT DESIGN
+- App name: ${value('app-name', 'My Book Matchmaker')}
+- Audience: ${value('reader-type', 'Kids choosing a book')}
+- Default reader request: ${value('reader-wants', 'I want something fun and adventurous.')}
+- Visual style: ${value('app-style', 'Colorful comic-book lab')}
+- Main colors: ${value('app-color', 'Teal and yellow')}
+- Personality: ${value('app-voice', 'Cheerful and encouraging')}
+- Special feature or rule: ${value('app-special', 'Always explain why the chosen book matches the reader.')}
+
+WHAT THE APP MUST DO
+1. Let the visitor choose 1 to 3 JPG, PNG, or WebP book-cover photos from their computer. The chooser must visibly support multiple files.
+2. Show a preview of every selected cover and let the visitor clear the selection.
+3. Ask what kind of book the reader wants. Include useful choices such as mood, genre, age group, and reading difficulty, plus a free-text request.
+4. Have one clear button that says something like "Find my book".
+5. When clicked, resize every image in the browser with canvas before sending it: preserve aspect ratio, maximum side 900 pixels, output JPEG quality 0.72.
+6. Show a friendly loading state, then call the KIDSGPT backend exactly as described below.
+7. Display the AI recommendation prominently, with its reason and who might like it.
+8. Display every detected book in a readable card with title, author, genre, moods, themes, age group, reading level, confidence, and anything the human should fact-check.
+9. Clearly label uncertain details as AI guesses. Show safety warnings if returned.
+10. Work on laptops and phones, and remain usable with keyboard navigation.
+
+KIDSGPT BACKEND CONNECTION
+Do not call OpenAI directly. Do not ask for or include an OpenAI API key. The secret is already protected by our backend.
+
+Send this request:
+- URL: https://kidsgpt.vectorcraft.net/api/book-vision
+- Method: POST
+- Header: Content-Type: application/json
+- JSON body:
+  {
+    "classCode": "libraryhelper108",
+    "images": ["the resized image data URLs"],
+    "reader": "the audience, age group, and reading difficulty selected in the app",
+    "preference": "the visitor's mood, genre, and free-text request",
+    "notes": "any extra student rule plus optional visitor notes"
   }
+
+Use fetch with the absolute URL above so the app works both as a local file opened from Downloads and after it is hosted.
+
+Handle the response exactly like this:
+- First run: const result = await response.json()
+- If response.ok is false, show result.error or a friendly retry message.
+- The useful answer is inside result.data.
+- The books are in result.data.books.
+- The main pick is in result.data.recommendation.
+- Extra filter ideas may be in result.data.filterIdeas.
+- A note for the builder may be in result.data.builderNote.
+
+TECHNICAL RULES
+- Put all HTML, CSS, and JavaScript in this one file.
+- Use no external libraries, frameworks, fonts, images, or build tools.
+- The app must still look intentionally designed and fun, not like a plain form.
+- Use a normal input type="file" with accept="image/png,image/jpeg,image/webp" and multiple.
+- Validate that there are 1 to 3 images before calling the backend.
+- Disable the recommendation button while waiting so it cannot send duplicates.
+- Catch network and image errors and explain how to retry.
+- Never use eval.
+- Treat all AI-returned text as untrusted: insert it with textContent or escape it before using innerHTML.
+- Do not save uploaded images in localStorage.
+- Include a small privacy reminder: book covers only; no faces, names, library cards, addresses, or private papers.
+- Include a small AI reminder: check titles, authors, and age suitability because image AI can guess incorrectly.
+- Make sure the complete app actually runs. Do not leave TODOs, placeholders, fake data, or missing functions.
+
+Before returning the HTML, silently check that the file chooser, image resizing, fetch request, loading state, error state, result rendering, reset button, and responsive layout are all implemented.`;
+
+  document.getElementById('app-prompt').value = prompt;
+  setStatus('prompt-status', 'prompt ready', 'good');
+  return prompt;
 }
-const coverInput = document.getElementById('cover-files');
-const coverDropZone = document.getElementById('cover-drop-zone');
-function openCoverPicker(){
+
+async function copyPrompt(){
+  const box = document.getElementById('app-prompt');
+  if (!box.value.trim()) buildPrompt();
   try {
-    if (typeof coverInput.showPicker === 'function') coverInput.showPicker();
-    else coverInput.click();
+    await navigator.clipboard.writeText(box.value);
   } catch {
-    coverInput.click();
+    box.focus();
+    box.select();
+    document.execCommand('copy');
   }
+  setStatus('prompt-status', 'copied - paste into ChatGPT', 'good');
 }
-coverInput.addEventListener('change', event => useCoverFiles(event.target.files));
-document.getElementById('cover-browse').addEventListener('click', event => {
-  event.stopPropagation();
-  openCoverPicker();
-});
-coverDropZone.addEventListener('click', openCoverPicker);
-coverDropZone.addEventListener('keydown', event => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    openCoverPicker();
-  }
-});
-['dragenter', 'dragover'].forEach(type => coverDropZone.addEventListener(type, event => {
-  event.preventDefault();
-  coverDropZone.classList.add('dragging');
-}));
-['dragleave', 'drop'].forEach(type => coverDropZone.addEventListener(type, event => {
-  event.preventDefault();
-  coverDropZone.classList.remove('dragging');
-}));
-coverDropZone.addEventListener('drop', event => useCoverFiles(event.dataTransfer.files));
-document.addEventListener('paste', event => {
-  const pastedImages = Array.from(event.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
-  if (pastedImages.length) useCoverFiles(pastedImages);
+
+function looksLikeHtml(html){
+  return /^<!doctype html>/i.test(html.trim()) || /<html[\s>]/i.test(html);
+}
+
+document.getElementById('student-app-file').addEventListener('change', async event => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  document.getElementById('student-app-html').value = await file.text();
+  setStatus('preview-status', 'file loaded - preview it', 'good');
 });
 
-async function askBookVision(){
-  if (!coverImages.length) {
-    setStatus('vision-status', 'add cover photos first', 'bad');
+function previewStudentApp(){
+  const html = value('student-app-html');
+  if (!looksLikeHtml(html)) {
+    setStatus('preview-status', 'choose or paste a complete HTML file', 'bad');
     return;
   }
-  setStatus('vision-status', 'asking mini model...');
-  document.getElementById('match-output').innerHTML = '';
-  try {
-    const response = await fetch('/api/book-vision', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        classCode: CLASS_CODE,
-        images: coverImages.map(image => image.dataUrl),
-        reader: value('reader-type', 'A kid reader'),
-        preference: value('match-question', value('reader-wants', 'Help me pick one book.')),
-        notes: value('book-notes', '')
-      })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Could not ask AI.');
-    lastMatch = result;
-    renderMatchResult(result);
-    setStatus('vision-status', `answered by ${result.model}`, 'good');
-    setStatus('upload-status', 'ready to upload', 'good');
-  } catch (error) {
-    setStatus('vision-status', error.message || 'AI unavailable', 'bad');
+  document.getElementById('preview-frame').srcdoc = html;
+  setStatus('preview-status', 'preview ready - test the photos and AI', 'good');
+  setStatus('upload-status', 'ready after your checks', 'good');
+}
+
+function downloadStudentApp(){
+  const html = value('student-app-html');
+  if (!looksLikeHtml(html)) {
+    setStatus('preview-status', 'add complete HTML first', 'bad');
+    return;
   }
+  const blob = new Blob([html], { type: 'text/html' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'book-matchmaker.html';
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
-function renderMatchResult(result){
-  const data = result.data || {};
-  const rec = data.recommendation || {};
-  const books = Array.isArray(data.books) ? data.books : [];
-  const cards = books.map((book, index) => `
-    <article class="result-card">
-      ${coverImages[index] ? `<img alt="Book ${index + 1} cover" src="${coverImages[index].thumbUrl}" style="width:100%;max-height:190px;object-fit:cover;border-radius:8px;border:1px solid #d7deea;margin-bottom:8px">` : ''}
-      <h3>Book ${book.slot || index + 1}: ${escapeHtml(book.title || 'not visible')}</h3>
-      <p><strong>Author:</strong> ${escapeHtml(book.author || 'not visible')}</p>
-      <p><strong>Genre:</strong> ${escapeHtml(book.genre || 'AI guess')}</p>
-      <p><strong>Age group:</strong> ${escapeHtml(book.ageGroup || 'AI guess')}</p>
-      <p><strong>Reading level:</strong> ${escapeHtml(book.readingLevel || 'AI guess')}</p>
-      <div class="tag-row">${tags(book.moods)}${tags(book.themes)}</div>
-      ${(book.factCheck || []).length ? `<p><strong>Check:</strong> ${escapeHtml(book.factCheck.join('; '))}</p>` : ''}
-      ${(book.safetyFlags || []).length ? `<p><strong>Safety:</strong> ${escapeHtml(book.safetyFlags.join('; '))}</p>` : ''}
-    </article>
-  `).join('');
-
-  document.getElementById('match-output').innerHTML = `
-    <div class="recommendation">
-      <h2>AI Pick: ${escapeHtml(rec.title || 'one of your books')}</h2>
-      <p><strong>Why:</strong> ${escapeHtml(rec.why || 'AI gave a recommendation from your covers.')}</p>
-      <p><strong>Who might like it:</strong> ${escapeHtml(rec.whoMightLikeIt || 'Readers with this preference.')}</p>
-      <p><strong>Try next:</strong> ${escapeHtml(rec.tryNextQuestion || 'Ask which book fits a different mood.')}</p>
-    </div>
-    <div class="result-grid">${cards}</div>
-    <div class="tool-note"><strong>Builder note:</strong> ${escapeHtml(data.builderNote || 'Check AI guesses before sharing.')}</div>
-  `;
-}
-
-function buildShareHtml(){
-  if (!lastMatch) throw new Error('Ask AI first.');
-  const data = lastMatch.data || {};
-  const rec = data.recommendation || {};
-  const books = Array.isArray(data.books) ? data.books : [];
-  const bookCards = books.map((book, index) => `
-    <article class="card">
-      ${coverImages[index] ? `<img alt="Book ${index + 1} cover" src="${coverImages[index].thumbUrl}">` : ''}
-      <h2>${escapeHtml(book.title || 'Book ' + (index + 1))}</h2>
-      <p><strong>Author:</strong> ${escapeHtml(book.author || 'not visible')}</p>
-      <p><strong>Genre:</strong> ${escapeHtml(book.genre || 'AI guess')}</p>
-      <p><strong>Moods:</strong> ${escapeHtml([...(book.moods || []), ...(book.themes || [])].join(', ') || 'AI guess')}</p>
-      <p><strong>Good for:</strong> ${escapeHtml(book.ageGroup || 'AI guess')} · ${escapeHtml(book.readingLevel || 'AI guess')}</p>
-      ${(book.factCheck || []).length ? `<p><strong>Fact check:</strong> ${escapeHtml(book.factCheck.join('; '))}</p>` : ''}
-    </article>
-  `).join('');
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Book Matchmaker Result</title>
-<meta name="robots" content="noindex">
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#eef7fb;color:#17223b}
-header{background:#7c5cff;color:#fff;padding:28px 20px;border-bottom:4px solid #17223b}
-main{max-width:880px;margin:0 auto;padding:20px}
-h1{margin:0;font-size:clamp(2rem,6vw,3.4rem)}
-.pick,.card,.note{background:#fff;border:2px solid #17223b;border-radius:12px;padding:16px;margin:14px 0;box-shadow:4px 4px 0 #17223b}
-.pick{background:#fff8d8}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-img{width:100%;max-height:230px;object-fit:cover;border-radius:8px;border:1px solid #d7deea}
-</style>
-</head>
-<body>
-<header><h1>Book Matchmaker Result</h1><p>Built with KIDSGPT. AI looked at cover photos and recommended one book from the set.</p></header>
-<main>
-<section class="pick">
-  <h2>AI Pick: ${escapeHtml(rec.title || 'one of the books')}</h2>
-  <p><strong>Why:</strong> ${escapeHtml(rec.why || '')}</p>
-  <p><strong>Who might like it:</strong> ${escapeHtml(rec.whoMightLikeIt || '')}</p>
-</section>
-<section class="grid">${bookCards}</section>
-<section class="note">
-  <strong>Privacy note:</strong> Photos should show book covers only. Do not share faces, library cards, names, or private papers.
-  Important book details should be checked by a human.
-</section>
-</main>
-</body>
-</html>`;
-}
-
-async function uploadMatchmaker(){
+async function uploadStudentApp(){
   const resultBox = document.getElementById('share-result');
   resultBox.hidden = true;
   setStatus('upload-status', 'uploading...');
   try {
-    const html = buildShareHtml();
+    const html = value('student-app-html');
+    if (!looksLikeHtml(html)) throw new Error('Choose or paste the complete HTML first.');
     const response = await fetch('/api/upload-story', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         student: (currentStudent() || {}).name || 'unknown',
-        title: 'Book Matchmaker Result',
+        title: value('app-name', 'Book Matchmaker'),
         html
       })
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Could not upload.');
     setStatus('upload-status', 'uploaded', 'good');
-    resultBox.innerHTML = `<strong>External URL:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a><p style="margin-bottom:0">Share after a teacher checks the facts and photo safety.</p>`;
+    resultBox.innerHTML = `<strong>Your live app:</strong><br><a href="${result.url}" target="_blank" rel="noopener">${result.url}</a><p style="margin-bottom:0">Anyone with this link can try your Book Matchmaker.</p>`;
     resultBox.hidden = false;
   } catch (error) {
     setStatus('upload-status', error.message || 'upload unavailable', 'bad');
