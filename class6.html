@@ -21,6 +21,11 @@
 .cover-tile{border:2px solid var(--ink);border-radius:12px;background:#fff;min-height:150px;padding:8px;display:grid;place-items:center;text-align:center;box-shadow:3px 3px 0 var(--ink);overflow:hidden}
 .cover-tile img{width:100%;height:170px;object-fit:cover;border-radius:8px;border:1px solid #d7deea}
 .cover-tile span{color:var(--ink-soft);font-weight:700}
+.cover-uploader{border:3px dashed var(--ink);border-radius:12px;background:#f5fbff;padding:22px 16px;text-align:center;cursor:pointer;transition:background .15s ease,transform .15s ease}
+.cover-uploader:hover,.cover-uploader:focus-visible,.cover-uploader.dragging{background:#e7f7ff;transform:translateY(-1px);outline:3px solid var(--sky);outline-offset:2px}
+.cover-uploader p{margin:10px 0 0;color:var(--ink-soft);font-size:.9rem}
+.cover-uploader .btn{pointer-events:auto}
+.visually-hidden-file{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .match-panel{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:16px;box-shadow:var(--shadow-sm)}
 .match-panel h3{margin-top:0}
 .match-panel input,.match-panel select,.match-panel textarea{width:100%;box-sizing:border-box}
@@ -132,8 +137,11 @@
   <div class="match-grid">
     <div class="match-panel">
       <h3>Cover Photos</h3>
-      <label class="field" for="cover-files">Choose or take up to 3 cover photos</label>
-      <input id="cover-files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+      <div id="cover-drop-zone" class="cover-uploader" role="button" tabindex="0" aria-label="Add up to 3 book cover photos">
+        <button id="cover-browse" class="btn violet" type="button">📁 Choose photos</button>
+        <p>Or drag photos here from Finder. You can also paste a copied image with ⌘V.</p>
+      </div>
+      <input id="cover-files" class="visually-hidden-file" type="file" accept="image/png,image/jpeg,image/webp" multiple>
       <div id="cover-preview" class="cover-strip">
         <div class="cover-tile"><span>Cover 1</span></div>
         <div class="cover-tile"><span>Cover 2</span></div>
@@ -319,17 +327,58 @@ function renderCoverPreview(){
   }).join('');
   document.getElementById('cover-preview').innerHTML = tiles;
 }
-document.getElementById('cover-files').addEventListener('change', async event => {
-  const files = Array.from(event.target.files || []).slice(0, 3);
+async function useCoverFiles(fileList){
+  const files = Array.from(fileList || [])
+    .filter(file => /^image\/(png|jpeg|webp)$/.test(file.type))
+    .slice(0, 3);
   coverImages = [];
   setStatus('vision-status', 'preparing photos...');
   try {
     for (const file of files) coverImages.push(await prepareCover(file));
     renderCoverPreview();
-    setStatus('vision-status', coverImages.length ? `${coverImages.length} cover(s) ready` : 'waiting for covers', coverImages.length ? 'good' : '');
+    setStatus(
+      'vision-status',
+      coverImages.length ? `${coverImages.length} cover(s) ready` : 'please add JPG, PNG, or WebP photos',
+      coverImages.length ? 'good' : 'bad'
+    );
   } catch (error) {
     setStatus('vision-status', error.message, 'bad');
   }
+}
+const coverInput = document.getElementById('cover-files');
+const coverDropZone = document.getElementById('cover-drop-zone');
+function openCoverPicker(){
+  try {
+    if (typeof coverInput.showPicker === 'function') coverInput.showPicker();
+    else coverInput.click();
+  } catch {
+    coverInput.click();
+  }
+}
+coverInput.addEventListener('change', event => useCoverFiles(event.target.files));
+document.getElementById('cover-browse').addEventListener('click', event => {
+  event.stopPropagation();
+  openCoverPicker();
+});
+coverDropZone.addEventListener('click', openCoverPicker);
+coverDropZone.addEventListener('keydown', event => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openCoverPicker();
+  }
+});
+['dragenter', 'dragover'].forEach(type => coverDropZone.addEventListener(type, event => {
+  event.preventDefault();
+  coverDropZone.classList.add('dragging');
+}));
+['dragleave', 'drop'].forEach(type => coverDropZone.addEventListener(type, event => {
+  event.preventDefault();
+  coverDropZone.classList.remove('dragging');
+}));
+coverDropZone.addEventListener('drop', event => useCoverFiles(event.dataTransfer.files));
+document.addEventListener('paste', event => {
+  const pastedImages = Array.from(event.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
+  if (pastedImages.length) useCoverFiles(pastedImages);
 });
 
 async function askBookVision(){
