@@ -25,9 +25,13 @@
 .preview-frame{width:100%;height:560px;border:2px solid var(--ink);border-radius:12px;background:#fff;box-shadow:var(--shadow-sm)}
 .step-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
 .step-list span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:12px;font-weight:700}
+.build-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin:16px 0}
+.build-flow span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:14px;text-align:center;font-weight:700}
+.build-flow b{font-family:var(--font-display);font-size:1.5rem;color:var(--design)}
+.revision-box{border:2px solid var(--ink);border-radius:12px;background:#f6fff2;padding:14px;margin:14px 0}
 .share-box{word-break:break-word;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-top:12px}
 .share-box a{font-weight:700;color:var(--design)}
-@media (max-width:760px){.mini-rule,.source-list,.config-grid,.step-list{grid-template-columns:1fr}.config-grid .full{grid-column:auto}.preview-frame{height:420px}.prompt-output{min-height:360px}}
+@media (max-width:760px){.mini-rule,.source-list,.config-grid,.step-list,.build-flow{grid-template-columns:1fr}.config-grid .full{grid-column:auto}.build-flow b{transform:rotate(90deg);justify-self:center}.preview-frame{height:420px}.prompt-output{min-height:360px}}
 </style>
 </head>
 <body>
@@ -49,8 +53,8 @@
   <p class="eyebrow">Module 1 · Week 6</p>
   <h1>Book Matchmaker</h1>
   <p style="max-width:68ch;color:var(--ink-soft)">Hey <strong class="student-name">builder</strong>!
-  Today you design your own live AI app. ChatGPT will write one HTML file for you. Your app will take up to
-  3 safe book-cover photos and ask our mini model to recommend one.</p>
+  Today you design your own live AI app. Our mini model will write the HTML for you. Your finished app will
+  take up to 3 safe book-cover photos and recommend one.</p>
   <div class="pips"><span class="pip brain"></span><span class="pip design"></span><span class="pip build"></span><span class="pip guard"></span><span class="pip launch"></span></div>
 </section>
 
@@ -168,41 +172,44 @@
 </section>
 
 <section class="lesson-section">
-  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Prompt: Give This To ChatGPT</h2></header>
-  <p>Click once. The prompt includes the mini-model connection and all the tricky code instructions. You do not need to add a secret.</p>
+  <header><span class="chip build">🔨</span><h2 style="margin:0">6 · Build Sprint: Mini Model Makes The Code</h2></header>
+  <p>Your design choices go to our secret backend helper. The helper asks the coding model for one complete HTML app.</p>
+  <div class="build-flow">
+    <span>🎨 Your design choices</span><b>→</b><span>🔐 Secret backend helper</span><b>→</b><span>🧩 Your HTML app</span>
+  </div>
   <p>
-    <button class="btn violet" onclick="buildPrompt()">Build my one-shot prompt</button>
-    <button class="btn sun" onclick="copyPrompt()">Copy prompt</button>
-    <span id="prompt-status" class="status-pill">not built yet</span>
+    <button id="generate-app-button" class="btn violet" onclick="generateStudentApp()">Generate my app</button>
+    <span id="generator-status" class="status-pill">ready to build</span>
   </p>
-  <textarea id="app-prompt" class="prompt-output" aria-label="Generated ChatGPT prompt" spellcheck="false"></textarea>
   <div class="tool-note">
-    <strong>How your app gets AI:</strong> ChatGPT puts our KIDSGPT helper address in the HTML. Your app sends photos to that helper.
-    The helper keeps the real OpenAI secret and returns the book recommendation.
+    <strong>No secret in your code:</strong> the generated app knows only the KIDSGPT helper address.
+    The real OpenAI secret stays protected on the backend.
   </div>
 </section>
 
 <section class="lesson-section">
-  <header><span class="chip build">💬</span><h2 style="margin:0">7 · Create It In ChatGPT</h2></header>
-  <div class="step-list">
-    <span>1. Copy your prompt and paste it into ChatGPT.</span>
-    <span>2. Ask ChatGPT to create the downloadable HTML file.</span>
-    <span>3. Download the file named book-matchmaker.html.</span>
+  <header><span class="chip design">🧩</span><h2 style="margin:0">7 · Builder Lab: Read And Improve</h2></header>
+  <p>The mini model gives you real code. Look for the title, colors, buttons, photo chooser, and the KIDSGPT helper address.</p>
+  <div class="revision-box">
+    <label class="field" for="revision-note">Ask AI for one improvement</label>
+    <textarea id="revision-note" placeholder="Example: Make the buttons bigger and add a surprise-me choice."></textarea>
+    <p>
+      <button id="revise-app-button" class="btn sun" onclick="reviseStudentApp()">Ask AI to improve it</button>
+      <span class="status-pill">keep the working features</span>
+    </p>
   </div>
-  <p>If ChatGPT explains instead of making the file, say: <strong>“Please create the complete downloadable HTML file now.”</strong></p>
+  <label class="field" for="student-app-html">Your generated HTML</label>
+  <textarea id="student-app-html" rows="16" class="prompt-output" placeholder="Your generated code will appear here." spellcheck="false"></textarea>
+  <p>
+    <button class="btn violet" onclick="previewStudentApp()">Refresh preview</button>
+    <button class="btn sun" onclick="downloadStudentApp()">Download HTML</button>
+    <span id="preview-status" class="status-pill">generate first</span>
+  </p>
 </section>
 
 <section class="lesson-section">
   <header><span class="chip guard">🧪</span><h2 style="margin:0">8 · Test Your App</h2></header>
-  <label class="field" for="student-app-file">Choose the HTML file ChatGPT made</label>
-  <input id="student-app-file" type="file" accept=".html,text/html">
-  <label class="field" for="student-app-html">Or paste the complete HTML here</label>
-  <textarea id="student-app-html" rows="12" class="prompt-output" placeholder="Paste from &lt;!doctype html&gt; to &lt;/html&gt;"></textarea>
-  <p>
-    <button class="btn violet" onclick="previewStudentApp()">Preview my app</button>
-    <button class="btn sun" onclick="downloadStudentApp()">Download HTML</button>
-    <span id="preview-status" class="status-pill">not tested yet</span>
-  </p>
+  <p>Use 1 to 3 safe cover photos. Check that the app previews them, asks what the reader likes, calls AI, and explains its recommendation.</p>
   <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts allow-forms" title="Book recommender preview"></iframe>
 </section>
 
@@ -309,104 +316,71 @@ function setStatus(id, text, kind = ''){
   el.textContent = text;
   el.className = 'status-pill' + (kind ? ' ' + kind : '');
 }
-function buildPrompt(){
-  const prompt = `Create one complete, polished, standalone HTML file named book-matchmaker.html.
-
-This is a real interactive app made by an 11-year-old builder. Return ONLY the complete HTML, beginning with <!doctype html> and ending with </html>. Do not use Markdown fences. Do not give explanations before or after the code.
-
-STUDENT DESIGN
-- App name: ${value('app-name', 'My Book Matchmaker')}
-- Audience: ${value('reader-type', 'Kids choosing a book')}
-- Default reader request: ${value('reader-wants', 'I want something fun and adventurous.')}
-- Visual style: ${value('app-style', 'Colorful comic-book lab')}
-- Main colors: ${value('app-color', 'Teal and yellow')}
-- Personality: ${value('app-voice', 'Cheerful and encouraging')}
-- Special feature or rule: ${value('app-special', 'Always explain why the chosen book matches the reader.')}
-
-WHAT THE APP MUST DO
-1. Let the visitor choose 1 to 3 JPG, PNG, or WebP book-cover photos from their computer. The chooser must visibly support multiple files.
-2. Show a preview of every selected cover and let the visitor clear the selection.
-3. Ask what kind of book the reader wants. Include useful choices such as mood, genre, age group, and reading difficulty, plus a free-text request.
-4. Have one clear button that says something like "Find my book".
-5. When clicked, resize every image in the browser with canvas before sending it: preserve aspect ratio, maximum side 900 pixels, output JPEG quality 0.72.
-6. Show a friendly loading state, then call the KIDSGPT backend exactly as described below.
-7. Display the AI recommendation prominently, with its reason and who might like it.
-8. Display every detected book in a readable card with title, author, genre, moods, themes, age group, reading level, confidence, and anything the human should fact-check.
-9. Clearly label uncertain details as AI guesses. Show safety warnings if returned.
-10. Work on laptops and phones, and remain usable with keyboard navigation.
-
-KIDSGPT BACKEND CONNECTION
-Do not call OpenAI directly. Do not ask for or include an OpenAI API key. The secret is already protected by our backend.
-
-Send this request:
-- URL: https://kidsgpt.vectorcraft.net/api/book-vision
-- Method: POST
-- Header: Content-Type: application/json
-- JSON body:
-  {
-    "classCode": "libraryhelper108",
-    "images": ["the resized image data URLs"],
-    "reader": "the audience, age group, and reading difficulty selected in the app",
-    "preference": "the visitor's mood, genre, and free-text request",
-    "notes": "any extra student rule plus optional visitor notes"
-  }
-
-Use fetch with the absolute URL above so the app works both as a local file opened from Downloads and after it is uploaded to KIDSGPT at kidsgpt.vectorcraft.net.
-
-Handle the response exactly like this:
-- First run: const result = await response.json()
-- If response.ok is false, show result.error or a friendly retry message.
-- The useful answer is inside result.data.
-- The books are in result.data.books.
-- The main pick is in result.data.recommendation.
-- Extra filter ideas may be in result.data.filterIdeas.
-- A note for the builder may be in result.data.builderNote.
-
-TECHNICAL RULES
-- Put all HTML, CSS, and JavaScript in this one file.
-- Use no external libraries, frameworks, fonts, images, or build tools.
-- The app must still look intentionally designed and fun, not like a plain form.
-- Use a normal input type="file" with accept="image/png,image/jpeg,image/webp" and multiple.
-- Validate that there are 1 to 3 images before calling the backend.
-- Disable the recommendation button while waiting so it cannot send duplicates.
-- Catch network and image errors and explain how to retry.
-- Never use eval.
-- Treat all AI-returned text as untrusted: insert it with textContent or escape it before using innerHTML.
-- Do not save uploaded images in localStorage.
-- Include a small privacy reminder: book covers only; no faces, names, library cards, addresses, or private papers.
-- Include a small AI reminder: check titles, authors, and age suitability because image AI can guess incorrectly.
-- Make sure the complete app actually runs. Do not leave TODOs, placeholders, fake data, or missing functions.
-
-Before returning the HTML, silently check that the file chooser, image resizing, fetch request, loading state, error state, result rendering, reset button, and responsive layout are all implemented.`;
-
-  document.getElementById('app-prompt').value = prompt;
-  setStatus('prompt-status', 'prompt ready', 'good');
-  return prompt;
+function appDesignPayload(){
+  return {
+    classCode: 'libraryhelper108',
+    appName: value('app-name', 'My Book Matchmaker'),
+    audience: value('reader-type', 'Kids choosing a book'),
+    readerWants: value('reader-wants', 'I want something fun and adventurous.'),
+    visualStyle: value('app-style', 'Colorful comic-book lab'),
+    colors: value('app-color', 'Teal and yellow'),
+    personality: value('app-voice', 'Cheerful and encouraging'),
+    specialFeature: value('app-special', 'Always explain why the chosen book matches the reader.')
+  };
 }
 
-async function copyPrompt(){
-  const box = document.getElementById('app-prompt');
-  if (!box.value.trim()) buildPrompt();
-  try {
-    await navigator.clipboard.writeText(box.value);
-  } catch {
-    box.focus();
-    box.select();
-    document.execCommand('copy');
+function setGeneratorBusy(busy){
+  document.getElementById('generate-app-button').disabled = busy;
+  document.getElementById('revise-app-button').disabled = busy;
+}
+
+async function requestGeneratedApp(revision = ''){
+  const currentHtml = value('student-app-html');
+  if (revision && !looksLikeHtml(currentHtml)) {
+    setStatus('generator-status', 'generate the first app before revising', 'bad');
+    return;
   }
-  setStatus('prompt-status', 'copied - paste into ChatGPT', 'good');
+
+  setGeneratorBusy(true);
+  setStatus('generator-status', revision ? 'AI is improving your code...' : 'AI is building your app...');
+  try {
+    const response = await fetch('/api/generate-book-app', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...appDesignPayload(),
+        revision,
+        currentHtml: revision ? currentHtml : ''
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not generate the app.');
+    document.getElementById('student-app-html').value = result.html;
+    previewStudentApp();
+    setStatus('generator-status', `${result.revised ? 'improved' : 'built'} by ${result.model}`, 'good');
+  } catch (error) {
+    setStatus('generator-status', error.message || 'app generator unavailable', 'bad');
+  } finally {
+    setGeneratorBusy(false);
+  }
+}
+
+function generateStudentApp(){
+  requestGeneratedApp('');
+}
+
+function reviseStudentApp(){
+  const revision = value('revision-note');
+  if (!revision) {
+    setStatus('generator-status', 'write one improvement first', 'bad');
+    return;
+  }
+  requestGeneratedApp(revision);
 }
 
 function looksLikeHtml(html){
   return /^<!doctype html>/i.test(html.trim()) || /<html[\s>]/i.test(html);
 }
-
-document.getElementById('student-app-file').addEventListener('change', async event => {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-  document.getElementById('student-app-html').value = await file.text();
-  setStatus('preview-status', 'file loaded - preview it', 'good');
-});
 
 function previewStudentApp(){
   const html = value('student-app-html');
