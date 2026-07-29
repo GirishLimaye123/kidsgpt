@@ -84,13 +84,18 @@ async function callOpenAI({ images, preference, reader, notes }) {
   }
 
   const model = process.env.BOOK_VISION_MODEL || process.env.OPENAI_MODEL || DEFAULT_MODEL;
+  const hasCovers = images.length > 0;
   const instructions = [
     'You are a safe classroom Book Matchmaker for 11-year-old builders.',
-    'Look only at the uploaded book cover images and the student notes.',
+    hasCovers
+      ? 'Use the uploaded book covers and student preferences. Recommend only from the uploaded books.'
+      : 'No covers were uploaded. Recommend three real, well-known books from general knowledge that fit the student preferences, and choose one as the top recommendation.',
     'Do not invent exact plot details, titles, authors, awards, series names, or age ratings.',
-    'If a detail is unclear, say "not visible" or mark it as an AI guess.',
+    hasCovers
+      ? 'If a cover detail is unclear, say "not visible" or mark it as an AI guess.'
+      : 'Use only books whose title and author you know with high confidence. Mark genre, age group, and reading level as guidance that a human should check.',
     'Never identify people in images. If a face or private information appears, flag the safety issue.',
-    'Recommend only from the uploaded books.',
+    'Never claim that a recommended book is available at the user\'s library.',
     'Return only compact JSON matching the requested shape.'
   ].join('\n');
 
@@ -101,6 +106,7 @@ async function callOpenAI({ images, preference, reader, notes }) {
         `Reader: ${reader}`,
         `What they want: ${preference}`,
         `Student notes: ${notes}`,
+        `Mode: ${hasCovers ? 'choose from uploaded covers' : 'suggest from reader preferences only'}`,
         '',
         'Return JSON with this shape:',
         '{',
@@ -166,9 +172,8 @@ module.exports = async function handler(req, res) {
     }
 
     const images = Array.isArray(body.images) ? body.images.slice(0, MAX_IMAGES).map(cleanImage) : [];
-    if (!images.length) return json(res, 400, { error: 'Add 1 to 3 book cover photos first.' });
 
-    const preference = cleanText(body.preference, 500) || 'Help me choose a good book from these covers.';
+    const preference = cleanText(body.preference, 500) || 'Suggest a fun book for a kid reader.';
     const reader = cleanText(body.reader, 300) || 'A kid reader choosing a next book';
     const notes = cleanText(body.notes, 1000);
     const result = await callOpenAI({ images, preference, reader, notes });

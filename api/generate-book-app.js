@@ -4,7 +4,7 @@ const DEFAULT_MODEL = 'gpt-5.6-terra';
 const DEFAULT_CLASS_CODE = 'libraryhelper108';
 const BOOK_VISION_URL = 'https://kidsgpt.vectorcraft.net/api/book-vision';
 const MAX_HTML_CHARS = 180000;
-const GENERATOR_VERSION = 'visible-file-input-v1';
+const GENERATOR_VERSION = 'optional-covers-drag-drop-v2';
 
 function cleanText(value, max = 300) {
   return String(value || '')
@@ -81,6 +81,8 @@ function validateHtml(html) {
     [/libraryhelper108/i, 'the classroom code'],
     [/type\s*=\s*["']file["']/i, 'a photo chooser'],
     [/\bmultiple\b/i, 'the three-cover chooser'],
+    [/\bdragover\b/i, 'drag-and-drop support'],
+    [/\bdrop\b/i, 'the photo drop handler'],
     [/\bfetch\s*\(/i, 'the backend request'],
     [/\bresponse\s*\.\s*json\s*\(/i, 'the response reader']
   ];
@@ -120,7 +122,7 @@ function designFromBody(body) {
 function buildRequestPrompt(design, revision, currentHtml) {
   const outcome = [
     'Create one polished, standalone HTML app for an 11-year-old student builder.',
-    'The app lets a visitor upload 1 to 3 book-cover photos and uses the KIDSGPT backend to recommend one book.',
+    'The app uses the KIDSGPT backend to recommend books from optional cover photos or from the reader\'s preferences alone.',
     '',
     'Student design:',
     `- App name: ${design.appName}`,
@@ -138,13 +140,16 @@ function buildRequestPrompt(design, revision, currentHtml) {
     '- Return exactly one complete HTML document, starting with <!doctype html> and ending with </html>.',
     '- Put all CSS and JavaScript inside the file. Use no external libraries, fonts, images, scripts, iframes, or build tools.',
     '- Make it playful and intentionally designed, with a clear visual hierarchy and responsive phone/laptop layout.',
-    '- Include a large, visible input type="file" with accept="image/png,image/jpeg,image/webp" and multiple.',
+    '- Include a large, visible input type="file" with accept="image/png,image/jpeg,image/webp" and multiple. Cover photos are optional.',
     '- Keep the actual native file input visible and clickable. Do not hide it, clip it, shrink it to 1px, make it transparent, or rely only on a styled label or custom button to open the picker.',
-    '- Let visitors choose 1 to 3 covers, preview them, clear them, and enter mood, genre, age group, reading difficulty, and a free-text request.',
+    '- Add a large drag-and-drop zone. It must handle dragenter, dragover, dragleave, and drop, accept image files, and use the same preview flow as the native chooser.',
+    '- Let visitors optionally choose or drop up to 3 covers, preview them, remove or clear them, and enter mood, genre, age group, reading difficulty, and a free-text request.',
     '- Resize each image in the browser with canvas: preserve aspect ratio, maximum side 900 pixels, JPEG quality 0.72.',
     '- Include one clear Find my book button. Disable it while waiting and show loading, success, and friendly error states.',
     '- Send a POST fetch request to https://kidsgpt.vectorcraft.net/api/book-vision with Content-Type application/json.',
-    '- The JSON body must contain classCode "libraryhelper108", images as resized data URLs, reader, preference, and notes.',
+    '- The JSON body must contain classCode "libraryhelper108", images as resized data URLs or an empty array, reader, preference, and notes.',
+    '- The Find my book button must work when no cover is selected. In that case, send images: [] and ask for recommendations based on the typed preferences.',
+    '- If covers are selected, tell the visitor that AI will choose among those covers. If none are selected, tell them that AI will suggest books from their interests.',
     '- Run const response = await fetch(...), then const result = await response.json(). If response.ok is false, show result.error.',
     '- Read books from result.data.books and the pick from result.data.recommendation.',
     '- Show the main recommendation, reason, who might like it, and readable cards for every detected book.',
@@ -155,7 +160,7 @@ function buildRequestPrompt(design, revision, currentHtml) {
     '- Include an AI reminder: a human must check titles, authors, and age suitability.',
     '- Do not leave TODOs, fake data, placeholders, missing functions, or instructions for the student to finish coding.',
     '',
-    'Before returning, silently check the chooser, previews, resizing, fetch request, loading state, errors, result rendering, reset control, keyboard access, and mobile layout.',
+    'Before returning, silently check the visible chooser, drag and drop, optional no-cover path, previews, resizing, fetch request, loading state, errors, result rendering, reset control, keyboard access, and mobile layout.',
     'Return only the HTML. Do not use Markdown fences or add an explanation.'
   ];
 
