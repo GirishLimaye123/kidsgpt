@@ -4,6 +4,7 @@ const DEFAULT_MODEL = 'gpt-5.6-terra';
 const DEFAULT_CLASS_CODE = 'libraryhelper108';
 const BOOK_VISION_URL = 'https://kidsgpt.vectorcraft.net/api/book-vision';
 const MAX_HTML_CHARS = 180000;
+const GENERATOR_VERSION = 'visible-file-input-v1';
 
 function cleanText(value, max = 300) {
   return String(value || '')
@@ -214,6 +215,7 @@ async function callOpenAI(prompt) {
 }
 
 module.exports = async function handler(req, res) {
+  res.setHeader('X-Kidsgpt-Generator-Version', GENERATOR_VERSION);
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return json(res, 405, { error: 'Use POST to generate a Book Matchmaker.' });
