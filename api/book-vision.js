@@ -83,8 +83,10 @@ async function callOpenAI({ images, preference, reader, notes }) {
     throw error;
   }
 
-  const model = process.env.BOOK_VISION_MODEL || process.env.OPENAI_MODEL || DEFAULT_MODEL;
   const hasCovers = images.length > 0;
+  const model = hasCovers
+    ? (process.env.BOOK_VISION_MODEL || process.env.OPENAI_MODEL || DEFAULT_MODEL)
+    : (process.env.BOOK_IDEAS_MODEL || process.env.BOOK_APP_MODEL || 'gpt-5.6-terra');
   const instructions = [
     'You are a safe classroom Book Matchmaker for 11-year-old builders.',
     hasCovers
@@ -132,7 +134,7 @@ async function callOpenAI({ images, preference, reader, notes }) {
       model,
       instructions,
       input: [{ role: 'user', content }],
-      reasoning: { effort: 'minimal' },
+      reasoning: { effort: hasCovers ? 'minimal' : 'low' },
       text: { verbosity: 'low' },
       max_output_tokens: 1800
     })
