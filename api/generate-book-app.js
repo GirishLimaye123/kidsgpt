@@ -90,6 +90,17 @@ function validateHtml(html) {
       throw error;
     }
   }
+
+  const styleText = (html.match(/<style\b[^>]*>[\s\S]*?<\/style>/gi) || []).join('\n');
+  const fileInputRules = styleText.match(/(?:input\s*\[\s*type\s*=\s*["']?file["']?\s*\]|#[a-z0-9_-]*(?:file|cover)[a-z0-9_-]*)\s*\{[^}]*\}/gi) || [];
+  const hiddenInput = fileInputRules.some(rule =>
+    /display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\D|$)|clip\s*:|width\s*:\s*1px|height\s*:\s*1px/i.test(rule)
+  );
+  if (hiddenInput) {
+    const error = new Error('The generated app hid the real photo chooser. Please generate again.');
+    error.statusCode = 502;
+    throw error;
+  }
   return html;
 }
 
@@ -127,6 +138,7 @@ function buildRequestPrompt(design, revision, currentHtml) {
     '- Put all CSS and JavaScript inside the file. Use no external libraries, fonts, images, scripts, iframes, or build tools.',
     '- Make it playful and intentionally designed, with a clear visual hierarchy and responsive phone/laptop layout.',
     '- Include a large, visible input type="file" with accept="image/png,image/jpeg,image/webp" and multiple.',
+    '- Keep the actual native file input visible and clickable. Do not hide it, clip it, shrink it to 1px, make it transparent, or rely only on a styled label or custom button to open the picker.',
     '- Let visitors choose 1 to 3 covers, preview them, clear them, and enter mood, genre, age group, reading difficulty, and a free-text request.',
     '- Resize each image in the browser with canvas: preserve aspect ratio, maximum side 900 pixels, JPEG quality 0.72.',
     '- Include one clear Find my book button. Disable it while waiting and show loading, success, and friendly error states.',
